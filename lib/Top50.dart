@@ -16,7 +16,7 @@ class Top50State extends State<Top50> {
 
   initState() {
     super.initState();
-    dpgsGetTop50(widget.year).then((p) { setState(() { players = p; }); });
+    dpgsGetTop50(widget.year).then((p) { setState(() { players = new List.unmodifiable(p); }); });
   }
 
   Widget build(BuildContext con) => new Scaffold(
