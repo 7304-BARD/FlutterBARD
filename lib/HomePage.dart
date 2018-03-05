@@ -7,33 +7,38 @@ import 'package:android_intent/android_intent.dart';
 import 'Top50.dart';
 import 'Tournaments.dart';
 
+class HPButton extends StatelessWidget {
+  final String label;
+  final Function handler;
+
+  HPButton(this.label, this.handler);
+
+  Widget build(BuildContext con) => new Padding(
+      padding: new EdgeInsets.all(10.0),
+      child: new RaisedButton(
+        color: Theme.of(con).accentColor,
+        child: new Text(label),
+        onPressed: handler,
+      ));
+}
+
 class HomePage extends StatelessWidget {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text("BARD")),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
-        new RaisedButton(
-          color: Theme.of(con).accentColor,
-          child: new Text("My Calendar"),
-          onPressed: () {},
-        ),
-        new RaisedButton(
-          color: Theme.of(con).accentColor,
-          child: new Text("My Watchlist"),
-          onPressed: () {},
-        ),
-        new RaisedButton(
-          color: Theme.of(con).accentColor,
-          child: new Text("Top 50"),
-          onPressed: () {
+        new HPButton("My Calendar", () {}),
+        new HPButton("My Watchlist", () {}),
+        new HPButton(
+          "Top 50",
+          () {
             Navigator.of(con).push(new MaterialPageRoute<Null>(
                   builder: (BuildContext con) => new Top50("2016"),
                 ));
           },
         ),
-        new RaisedButton(
-          color: Theme.of(con).accentColor,
-          child: new Text("Map"),
-          onPressed: () {
+        new HPButton(
+          "Map",
+          () {
             if (Platform.isAndroid) {
               new AndroidIntent(
                       action: 'action_view',
@@ -43,10 +48,9 @@ class HomePage extends StatelessWidget {
             }
           },
         ),
-        new RaisedButton(
-          color: Theme.of(con).accentColor,
-          child: new Text("Tournaments"),
-          onPressed: () {
+        new HPButton(
+          "Tournaments",
+          () {
             Navigator.of(con).push(new MaterialPageRoute<Null>(
                   builder: (BuildContext con) => new Tournaments(),
                 ));
