@@ -12,21 +12,21 @@ class PlayerListElementWidget extends StatefulWidget {
 
 class PlayerListElementWidgetState extends State<PlayerListElementWidget> {
   Widget build(BuildContext con) => new GestureDetector(
-    onTap: widget.onTap,
-    child: new Row(
-      children: [
-        new Expanded(
-          child: new Padding(
-            padding: new EdgeInsets.all(8.0),
-            child: new Text(widget.player.name, style: new TextStyle(fontWeight: FontWeight.bold)),
+      onTap: widget.onTap,
+      child: new Row(
+        children: [
+          new Expanded(
+            child: new Padding(
+              padding: new EdgeInsets.all(8.0),
+              child: new Text(widget.player.name,
+                  style: new TextStyle(fontWeight: FontWeight.bold)),
+            ),
           ),
-        ),
-        new Text(widget.player.pos),
-        new Padding(
-          padding: new EdgeInsets.all(8.0),
-          child: new Text(widget.player.year),
-        ),
-      ],
-    )
-  );
+          new Text(widget.player.pos),
+          new Padding(
+            padding: new EdgeInsets.all(8.0),
+            child: new Text(widget.player.year),
+          ),
+        ],
+      ));
 }

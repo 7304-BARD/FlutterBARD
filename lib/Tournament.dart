@@ -1,7 +1,7 @@
 class Tournament {
-    final String title;
-    final String date;
-    final String location;
+  final String title;
+  final String date;
+  final String location;
 
-    Tournament(this.title, this.date, this.location);
+  Tournament(this.title, this.date, this.location);
 }
