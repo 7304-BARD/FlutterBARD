@@ -13,14 +13,17 @@ class HomePage extends StatelessWidget {
             padding: new EdgeInsets.all(20.0),
             children: [
                 new RaisedButton(
+                    color: Theme.of(con).accentColor,
                     child: new Text("My Calendar"),
                     onPressed: () {},
                 ),
                 new RaisedButton(
+                    color: Theme.of(con).accentColor,
                     child: new Text("My Watchlist"),
                     onPressed: () {},
                 ),
                 new RaisedButton(
+                    color: Theme.of(con).accentColor,
                     child: new Text("Top 50"),
                     onPressed: () {
                         Navigator.of(con).push(new MaterialPageRoute<Null>(
@@ -29,6 +32,7 @@ class HomePage extends StatelessWidget {
                     },
                 ),
                 new RaisedButton(
+                    color: Theme.of(con).accentColor,
                     child: new Text("Map"),
                     onPressed: () {
                         if (Platform.isAndroid) {
@@ -40,6 +44,7 @@ class HomePage extends StatelessWidget {
                     },
                 ),
                 new RaisedButton(
+                    color: Theme.of(con).accentColor,
                     child: new Text("Tournaments"),
                     onPressed: () {},
                 ),

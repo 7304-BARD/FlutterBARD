@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
       title: 'BARD',
       theme: new ThemeData(
         primarySwatch: Colors.orange,
+        accentColor: const Color(0xffffaabb),
       ),
       home: new HomePage(),
     );
