@@ -16,20 +16,22 @@ class Top50State extends State<Top50> {
 
   initState() {
     super.initState();
-    dpgsGetTop50(widget.year).then((p) { setState(() { players = p; }); });
+    dpgsGetTop50(widget.year).then((p) {
+      setState(() {
+        players = new List.unmodifiable(p);
+      });
+    });
   }
 
   Widget build(BuildContext con) => new Scaffold(
-    appBar: new AppBar(title: new Text('BARD')),
-    body: new ListView(
-      children: new List.unmodifiable(players.map((p) => new PlayerListElementWidget(p, () {
-        Navigator.of(con).push(new MaterialPageRoute<Null>(
-          builder: (BuildContext con) => new Scaffold(
-            appBar: new AppBar(title: new Text(p.name)),
-            body: new PlayerDetailWidget(p),
-          )
-        ));
-      })))
-    )
-  );
+      appBar: new AppBar(title: new Text("Top Players of ${widget.year}")),
+      body: new ListView(
+          children: new List.unmodifiable(
+              players.map((p) => new PlayerListElementWidget(p, () {
+                    Navigator.of(con).push(new MaterialPageRoute<Null>(
+                        builder: (BuildContext con) => new Scaffold(
+                              appBar: new AppBar(title: new Text(p.name)),
+                              body: new PlayerDetailWidget(p),
+                            )));
+                  })))));
 }

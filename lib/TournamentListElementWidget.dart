@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'Player.dart';
+import 'Tournament.dart';
 
-class PlayerListElementWidget extends StatefulWidget {
-  final Player player;
+class TournamentListElementWidget extends StatefulWidget {
+  final Tournament tournament;
   final Function onTap;
 
-  PlayerListElementWidget(this.player, this.onTap);
-  State<StatefulWidget> createState() => new PlayerListElementWidgetState();
+  TournamentListElementWidget(this.tournament, this.onTap);
+  State<StatefulWidget> createState() => new TournamentListElementWidgetState();
 }
 
-class PlayerListElementWidgetState extends State<PlayerListElementWidget> {
+class TournamentListElementWidgetState
+    extends State<TournamentListElementWidget> {
   Widget build(BuildContext con) => new GestureDetector(
       onTap: widget.onTap,
       child: new Row(
@@ -18,14 +19,14 @@ class PlayerListElementWidgetState extends State<PlayerListElementWidget> {
           new Expanded(
             child: new Padding(
               padding: new EdgeInsets.all(8.0),
-              child: new Text(widget.player.name,
+              child: new Text(widget.tournament.title,
                   style: new TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
-          new Text(widget.player.pos),
+          new Text(widget.tournament.location),
           new Padding(
             padding: new EdgeInsets.all(8.0),
-            child: new Text(widget.player.year),
+            child: new Text(widget.tournament.date),
           ),
         ],
       ));
