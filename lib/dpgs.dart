@@ -19,6 +19,13 @@ Future<Document> dpgsGetRaw(String res, [Map<String, String> params]) async {
   return doc;
 }
 
+Iterable<E> stride<E>(Iterable<E> it, int stride) sync* {
+  while (it.isNotEmpty) {
+    yield it.first;
+    it = it.skip(stride);
+  }
+}
+
 Future<Document> dpgsGetPlayerRaw(String id) =>
     dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
 Future<Player> dpgsGetPlayer(String id) =>
@@ -31,7 +38,7 @@ Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d) => d
     .querySelectorAll('tr a[href*="Playerprofile.aspx"]')
     .map((e) => e.parent.parent.parent.parent);
 Iterable<Element> dpgsGetEventBoxes(Document d) =>
-    d.querySelectorAll("div.EventBox");
+    stride(d.querySelectorAll("div.EventBox"), 2);
 Future<Document> dpgsGetTop50Raw(String year) =>
     dpgsGetRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
 Future<Iterable<Tournament>> dpgsGetTournamentsData() => dpgsGetTournaments()
