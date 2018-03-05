@@ -20,7 +20,7 @@ class Top50State extends State<Top50> {
   }
 
   Widget build(BuildContext con) => new Scaffold(
-    appBar: new AppBar(title: new Text('BARD')),
+    appBar: new AppBar(title: new Text("Top Players of ${widget.year}")),
     body: new ListView(
       children: new List.unmodifiable(players.map((p) => new PlayerListElementWidget(p, () {
         Navigator.of(con).push(new MaterialPageRoute<Null>(

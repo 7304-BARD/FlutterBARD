@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Top50.dart';
+import 'HomePage.dart';
 
 void main() => runApp(new MyApp());
 
@@ -10,6 +10,6 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: new Top50("2016"),
+      home: new HomePage(),
     );
 }

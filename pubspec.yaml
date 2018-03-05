@@ -4,6 +4,7 @@ description: A new Flutter application.
 dependencies:
   flutter:
     sdk: flutter
+  android_intent: ^0.1.1
   html: ^0.13.2+2
   shared_preferences: ^0.3.3
   tuple: ^1.0.1
