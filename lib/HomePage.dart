@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:android_intent/android_intent.dart';
 
 import 'Top50.dart';
+import 'Tournaments.dart';
 
 class HomePage extends StatelessWidget {
   Widget build(BuildContext con) => new Scaffold(
@@ -45,7 +46,11 @@ class HomePage extends StatelessWidget {
         new RaisedButton(
           color: Theme.of(con).accentColor,
           child: new Text("Tournaments"),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(con).push(new MaterialPageRoute<Null>(
+                  builder: (BuildContext con) => new Tournaments(),
+                ));
+          },
         ),
       ]));
 }
