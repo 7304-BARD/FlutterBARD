@@ -33,9 +33,21 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
   }
 
   Widget build(BuildContext con) => new Align(
-      child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: new List.unmodifiable(
-              widget.player.detailMap().map((p) => new KVText(p)))));
+      child: new Scaffold(
+          appBar: new AppBar(title: new Text(widget.player.name), actions: [
+            new IconButton(
+                icon: new Icon(widget.player.watchlist
+                    ? Icons.not_interested
+                    : Icons.person_add),
+                onPressed: () {
+                  setState(() {
+                    widget.player.watchlist = !widget.player.watchlist;
+                  });
+                })
+          ]),
+          body: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: new List.unmodifiable(
+                  widget.player.detailMap().map((p) => new KVText(p))))));
 }

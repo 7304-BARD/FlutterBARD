@@ -6,6 +6,7 @@ import 'package:android_intent/android_intent.dart';
 
 import 'Top50.dart';
 import 'Tournaments.dart';
+import 'Watchlist.dart';
 
 class HPButton extends StatelessWidget {
   final String label;
@@ -26,8 +27,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text("BARD")),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
-        new HPButton("My Calendar", () {}),
-        new HPButton("My Watchlist", () {}),
+        new HPButton("My Calendar", null),
+        new HPButton("My Watchlist", () {
+          Navigator.of(con).push(new MaterialPageRoute<Null>(
+              builder: (BuildContext con) => new Watchlist()));
+        }),
         new HPButton(
           "Top 50",
           () {

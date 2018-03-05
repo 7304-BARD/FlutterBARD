@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:html/parser.dart';
 import 'package:html/dom.dart';
+import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
 
 import 'Player.dart';
@@ -26,6 +27,13 @@ Iterable<E> stride<E>(Iterable<E> it, int stride) sync* {
   }
 }
 
+Element domUp(Element e, int levels) {
+  range(levels).forEach((_) {
+    e = e.parent;
+  });
+  return e;
+}
+
 Future<Document> dpgsGetPlayerRaw(String id) =>
     dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
 Future<Player> dpgsGetPlayer(String id) =>
@@ -34,9 +42,10 @@ Future<Document> dpgsGetSearch(String q) =>
     dpgsGetRaw('Search.aspx', {'search': q});
 Future<Document> dpgsGetTournaments() =>
     dpgsGetRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
-Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d) => d
-    .querySelectorAll('tr a[href*="Playerprofile.aspx"]')
-    .map((e) => e.parent.parent.parent.parent);
+Iterable<Element> dpgsGetPlayerKeyedTableAnchors(Document d) =>
+    d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
+Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d, int up) =>
+    dpgsGetPlayerKeyedTableAnchors(d).map((e) => domUp(e, up));
 Iterable<Element> dpgsGetEventBoxes(Document d) =>
     stride(d.querySelectorAll("div.EventBox"), 2);
 Future<Document> dpgsGetTop50Raw(String year) =>
@@ -49,15 +58,15 @@ Tuple2<String, String> dpgsGetIdName(Element e) {
   return new Tuple2(href.substring(href.lastIndexOf('=') + 1), e.text);
 }
 
-Future<Iterable<Player>> dpgsGetTop50(String year) =>
-    dpgsGetTop50Raw(year).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
+Future<Iterable<Player>> dpgsGetTop50(String year) => dpgsGetTop50Raw(year)
+    .then((d) => dpgsGetPlayerKeyedTableRows(d, 4).map((r) {
           var idname = dpgsGetIdName(r.querySelector('a'));
           return new Player.unpopulated(
               idname.item1, idname.item2, r.children[2].text, year);
         }));
 
 Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
-    dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
+    dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d, 2).map((r) {
           var idname = dpgsGetIdName(r.children[0].children[0]);
           return new Player.unpopulated(idname.item1, idname.item2,
               r.children[1].text, r.children[2].text);

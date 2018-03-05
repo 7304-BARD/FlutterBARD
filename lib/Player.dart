@@ -19,6 +19,7 @@ class Player {
   String town;
   String teamSummer;
   String teamFall;
+  bool watchlist = false;
   bool populated;
 
   Player(Document html) {

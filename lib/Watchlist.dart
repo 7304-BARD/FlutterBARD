@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 
-import 'dpgs.dart';
 import 'Player.dart';
 import 'PlayerDetailWidget.dart';
 import 'PlayerListElementWidget.dart';
+import 'Search.dart';
 
-class Top50 extends StatefulWidget {
-  State<StatefulWidget> createState() => new Top50State();
-  final String year;
-  Top50(this.year);
+class Watchlist extends StatefulWidget {
+  State<StatefulWidget> createState() => new WatchlistState();
 }
 
-class Top50State extends State<Top50> {
+class WatchlistState extends State<Watchlist> {
   List<Player> players = [];
 
-  initState() {
-    super.initState();
-    dpgsGetTop50(widget.year).then((p) {
-      setState(() {
-        players = new List.unmodifiable(p);
-      });
-    });
-  }
-
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("Top Players of ${widget.year}")),
+      appBar: new AppBar(title: new Text("My Watchlist")),
+      floatingActionButton: new FloatingActionButton(
+          child: new Icon(Icons.search),
+          onPressed: () {
+            Navigator.of(con).push(new MaterialPageRoute<Null>(
+                builder: (BuildContext con) => new PlayerSearchWidget()));
+          }),
       body: new ListView(
           children: new List.unmodifiable(
               players.map((p) => new PlayerListElementWidget(p, () {
