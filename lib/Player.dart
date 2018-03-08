@@ -51,6 +51,45 @@ class Player {
     populated = false;
   }
 
+  populateFromMap(Map<String, dynamic> kv) {
+    pgid = kv['pgid'];
+    name = kv['name'];
+    year = kv['year'];
+    pos = kv['pos'];
+    pos2 = kv['pos2'];
+    age = kv['age'];
+    height = kv['height'];
+    weight = kv['weight'];
+    bt = kv['bt'];
+    hs = kv['hs'];
+    town = kv['town'];
+    teamSummer = kv['teamSummer'];
+    teamFall = kv['teamFall'];
+    watchlist = kv['watchlist'];
+    populated = true;
+  }
+
+  Player.fromMap(Map<String, dynamic> kv) {
+    populateFromMap(kv);
+  }
+
+  Map<String, dynamic> toMap() => {
+        "pgid": pgid,
+        "name": name,
+        "year": year,
+        "pos": pos,
+        "pos2": pos2,
+        "age": age,
+        "height": height,
+        "weight": weight,
+        "bt": bt,
+        "hs": hs,
+        "town": town,
+        "teamSummer": teamSummer,
+        "teamFall": teamFall,
+        "watchlist": watchlist,
+      };
+
   void addIfNonNull(
       List<Tuple2<String, String>> list, String key, String value) {
     if (value != null) list.add(new Tuple2(key, value));
