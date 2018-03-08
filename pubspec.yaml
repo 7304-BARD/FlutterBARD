@@ -6,11 +6,13 @@ dependencies:
     sdk: flutter
   android_intent: ^0.1.1
   html: ^0.13.2+2
+  path_provider: ^0.3.1
   range: ^1.1.1
   shared_preferences: ^0.3.3
   tuple: ^1.0.1
-  sqflite: ^0.7.1
-  cupertino_icons: ^0.1.0
+  sembast: ^1.6.1
+  sqflite: ^0.8.2
+  cupertino_icons: ^0.1.1
 
 dev_dependencies:
   flutter_test:
