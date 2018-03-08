@@ -4,6 +4,7 @@ import 'package:html/dom.dart';
 import 'package:tuple/tuple.dart';
 
 import 'dpgs.dart';
+import 'PlayerCache.dart';
 
 class Player {
   String pgid;
@@ -25,8 +26,10 @@ class Player {
   Player(Document html) {
     populate(html);
   }
-  Future<Null> populateAsync() =>
-      dpgsGetPlayerRaw(pgid).then((h) => populate(h));
+  Future<Null> populateAsync(PlayerCache pc) async {
+    await pc.init();
+    await pc.getPlayerMap(pgid).then((m) => populateFromMap(m));
+  }
 
   populate(Document html) {
     name = html.querySelector("#ContentPlaceHolder1_Bio1_lblName").text;

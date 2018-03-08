@@ -29,7 +29,7 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
   initState() {
     super.initState();
     if (!widget.player.populated) {
-      widget.player.populateAsync().then((_) {
+      widget.player.populateAsync(pcache).then((_) {
         setState(() {});
       });
     }
