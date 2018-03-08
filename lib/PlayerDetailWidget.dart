@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
 import 'Player.dart';
+import 'PlayerCache.dart';
 
 class KVText extends StatelessWidget {
   final Tuple2<String, String> pair;
@@ -23,6 +24,8 @@ class PlayerDetailWidget extends StatefulWidget {
 }
 
 class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
+  PlayerCache pcache = new PlayerCache();
+
   initState() {
     super.initState();
     if (!widget.player.populated) {
@@ -40,9 +43,12 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
                     ? Icons.not_interested
                     : Icons.person_add),
                 onPressed: () {
-                  setState(() {
-                    widget.player.watchlist = !widget.player.watchlist;
-                  });
+                  (widget.player.watchlist
+                          ? pcache.init().then(
+                              (_) => pcache.removeFromWatchlist(widget.player))
+                          : pcache.init().then(
+                              (_) => pcache.addToWatchlist(widget.player)))
+                      .then((_) => setState(() => null));
                 })
           ]),
           body: new Column(
