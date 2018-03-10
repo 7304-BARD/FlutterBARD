@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "577334348997",
+    "firebase_url": "https://recruitmentapp-409cd.firebaseio.com",
+    "project_id": "recruitmentapp-409cd",
+    "storage_bucket": "recruitmentapp-409cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577334348997:android:8dc67d3de3573106",
+        "android_client_info": {
+          "package_name": "c3e56725_1f70_4a6b_8967_a5ae5459fbb0.FlutterBARD"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577334348997-hs708q8tfd92i4vevk3fhtqod3udmvc8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIrPZAxyN0BQme_0OUeb7eNp-oi0PpA0k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
