@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'HomePage.dart';
+import 'Register.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  createState() => new LoginState();
+}
+
+class LoginState extends State<Login> {
+  final emailCon = new TextEditingController();
+  final passCon = new TextEditingController();
+
   Widget build(BuildContext context) {
-    final emailCon = new TextEditingController();
-    final passCon = new TextEditingController();
     return new Scaffold(
         appBar: new AppBar(title: new Text("Login")),
         body: new Padding(
@@ -29,15 +35,10 @@ class Login extends StatelessWidget {
                   Navigator.of(context).pushReplacementNamed('/');
                 }),
                 new HPButton('Register', () {
-                  Navigator.of(context).pushReplacement(
-                      new MaterialPageRoute<Null>(
-                          builder: (BuildContext con) => new Register()));
+                  Navigator.of(context).push(new MaterialPageRoute<Null>(
+                      builder: (BuildContext con) => new Register()));
                 }),
               ],
             )));
   }
-}
-
-class Register extends StatelessWidget {
-  Widget build(BuildContext context) => new Text("REGISTER PLACEHOLDER");
 }
