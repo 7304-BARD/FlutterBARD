@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:android_intent/android_intent.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'Top50.dart';
 import 'Tournaments.dart';
@@ -24,8 +25,19 @@ class HPButton extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+  final FirebaseUser user;
+
+  HomePage(this.user);
+
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("BARD")),
+      appBar: new AppBar(title: new Text("BARD"), actions: [
+        new IconButton(
+            icon: new Icon(Icons.lock),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(con).pushReplacementNamed('/');
+            })
+      ]),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
         new HPButton("My Calendar", null),
         new HPButton("My Watchlist", () {
