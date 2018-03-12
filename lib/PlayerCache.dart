@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -40,30 +44,50 @@ class PlayerCache {
     }
   }
 
-  Future<Iterable<Player>> getPlayersForIds(Iterable<String> ids) async {
+  Future<List<Player>> getPlayersForIds(Iterable<String> ids) async {
     final List<Player> players = [];
     for (String id in ids) players.add(await getPlayerForId(id));
     return players;
   }
 
-  Future<Iterable<Player>> getWatchlistPlayers() async =>
-      getPlayersForIds(await db.get("watchlist") ?? []);
+  Future<DatabaseReference> getWatchlistDBRef() async {
+    final fbase = FirebaseDatabase.instance;
+    final uid = (await FirebaseAuth.instance.currentUser()).uid;
+    await fbase.setPersistenceEnabled(true);
+    return fbase.reference().child('users/$uid/watchlist');
+  }
+
+  Future<List<String>> getWatchlistIds() async {
+    final dbref = await getWatchlistDBRef();
+    final snapshot = await dbref.once();
+    return snapshot.value ?? [];
+  }
+
+  Future<Null> setWatchlistIds(List<String> watchlist) async {
+    final dbref = await getWatchlistDBRef();
+    await dbref.set(watchlist);
+  }
+
+  Future<List<Player>> getWatchlistPlayers() async =>
+      getPlayersForIds(await getWatchlistIds());
 
   Future<Null> addToWatchlist(Player p) async {
     p.watchlist = true;
-    final wl = await db.get("watchlist") ?? [];
+    var wl = await getWatchlistIds();
     if (!wl.contains(p.pgid)) {
+      wl = new List.from(wl);
       wl.add(p.pgid);
+      debugPrint("$wl");
+      await setWatchlistIds(wl);
       await db.put(p.toMap(), p.pgid);
-      await db.put(wl, "watchlist");
     }
   }
 
   Future<Null> removeFromWatchlist(Player p) async {
     p.watchlist = false;
-    final wl = await db.get("watchlist") ?? [];
+    final wl = new List.from(await getWatchlistIds());
     if (wl.remove(p.pgid)) {
-      await db.put(wl, "watchlist");
+      await setWatchlistIds(wl);
       await db.put(p.toMap(), p.pgid);
     }
   }
