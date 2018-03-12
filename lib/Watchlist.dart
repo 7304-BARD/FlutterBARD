@@ -32,7 +32,9 @@ class WatchlistState extends State<Watchlist> {
                 .of(con)
                 .push(new MaterialPageRoute<Null>(
                     builder: (BuildContext con) => new PlayerSearchWidget()))
-                .then((_) => setState(() {initState(); }));
+                .then((_) => setState(() {
+                      initState();
+                    }));
           }),
       body: new ListView(
           children: new List.unmodifiable(

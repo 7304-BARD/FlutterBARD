@@ -39,9 +39,8 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
       child: new Scaffold(
           appBar: new AppBar(title: new Text(widget.player.name), actions: [
             new IconButton(
-                icon: new Icon(widget.player.watchlist
-                    ? Icons.not_interested
-                    : Icons.person_add),
+                icon: new Icon(
+                    widget.player.watchlist ? Icons.star : Icons.star_border),
                 onPressed: () {
                   (widget.player.watchlist
                           ? pcache.init().then(
