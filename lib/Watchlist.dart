@@ -14,13 +14,15 @@ class WatchlistState extends State<Watchlist> {
   PlayerCache pcache = new PlayerCache();
   List<Player> players = [];
 
+  void refreshPlayers() async {
+    await pcache.init();
+    players = await pcache.getWatchlistPlayers();
+    setState(() {});
+  }
+
   void initState() {
     super.initState();
-    pcache.init().then((_) {
-      pcache.getWatchlistPlayers().then((i) => setState(() {
-            players = new List.unmodifiable(i);
-          }));
-    });
+    refreshPlayers();
   }
 
   Widget build(BuildContext con) => new Scaffold(
@@ -32,15 +34,16 @@ class WatchlistState extends State<Watchlist> {
                 .of(con)
                 .push(new MaterialPageRoute<Null>(
                     builder: (BuildContext con) => new PlayerSearchWidget()))
-                .then((_) => setState(() {
-                      initState();
-                    }));
+                .then((_) => refreshPlayers());
           }),
       body: new ListView(
           children: new List.unmodifiable(
               players.map((p) => new PlayerListElementWidget(p, () {
-                    Navigator.of(con).push(new MaterialPageRoute<Null>(
-                        builder: (BuildContext con) =>
-                            new PlayerDetailWidget(p)));
+                    Navigator
+                        .of(con)
+                        .push(new MaterialPageRoute<Null>(
+                            builder: (BuildContext con) =>
+                                new PlayerDetailWidget(p)))
+                        .then((_) => refreshPlayers());
                   })))));
 }
