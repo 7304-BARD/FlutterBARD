@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:html/dom.dart';
 import 'package:tuple/tuple.dart';
 
-import 'dpgs.dart';
 import 'PlayerCache.dart';
 
 class Player {
@@ -23,7 +22,7 @@ class Player {
   bool watchlist = false;
   bool populated;
 
-  Player(Document html) {
+  Player(this.pgid, Document html) {
     populate(html);
   }
   Future<Null> populateAsync(PlayerCache pc) async {

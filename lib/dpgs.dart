@@ -37,7 +37,7 @@ Element domUp(Element e, int levels) {
 Future<Document> dpgsGetPlayerRaw(String id) =>
     dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
 Future<Player> dpgsGetPlayer(String id) =>
-    dpgsGetPlayerRaw(id).then((d) => new Player(d));
+    dpgsGetPlayerRaw(id).then((d) => new Player(id, d));
 Future<Document> dpgsGetSearch(String q) =>
     dpgsGetRaw('Search.aspx', {'search': q});
 Future<Document> dpgsGetTournaments() =>
