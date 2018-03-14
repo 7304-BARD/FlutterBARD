@@ -60,7 +60,8 @@ class PlayerCache {
   Future<List<String>> getWatchlistIds() async {
     final dbref = await getWatchlistDBRef();
     final snapshot = await dbref.once();
-    return snapshot.value ?? [];
+    final ids = snapshot.value ?? [];
+    return new List.unmodifiable(ids.where((t) => t != null));
   }
 
   Future<Null> setWatchlistIds(List<String> watchlist) async {
