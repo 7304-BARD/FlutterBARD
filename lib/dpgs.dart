@@ -34,50 +34,81 @@ Element domUp(Element e, int levels) {
   return e;
 }
 
-Future<Document> dpgsGetPlayerRaw(String id) =>
-    dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
-Future<Player> dpgsGetPlayer(String id) =>
-    dpgsGetPlayerRaw(id).then((d) => new Player(id, d));
-Future<Document> dpgsGetSearch(String q) =>
-    dpgsGetRaw('Search.aspx', {'search': q});
-Future<Document> dpgsGetTournaments() =>
-    dpgsGetRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
-Iterable<Element> dpgsGetPlayerKeyedTableAnchors(Document d) =>
-    d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
-Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d, int up) =>
-    dpgsGetPlayerKeyedTableAnchors(d).map((e) => domUp(e, up));
-Iterable<Element> dpgsGetEventBoxes(Document d) =>
-    stride(d.querySelectorAll("div.EventBox"), 2);
-Future<Document> dpgsGetTop50Raw(String year) =>
-    dpgsGetRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
-Future<Iterable<Tournament>> dpgsGetTournamentsData() => dpgsGetTournaments()
-    .then((d) => dpgsGetEventBoxes(d).map((e) => dpgsGetEventData(e)));
-
-Tuple2<String, String> dpgsGetIdName(Element e) {
-  String href = e.attributes["href"];
-  return new Tuple2(href.substring(href.lastIndexOf('=') + 1), e.text);
+Element ancestorByTag(Element e, String tag) {
+  while (e.localName != tag) e = e.parent;
+  return e;
 }
 
+Future<Document> dpgsGetPlayerRaw(String id) =>
+    dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
+
+Future<Player> dpgsGetPlayer(String id) =>
+    dpgsGetPlayerRaw(id).then((d) => new Player(id, d));
+
+Future<Document> dpgsGetSearch(String q) =>
+    dpgsGetRaw('Search.aspx', {'search': q});
+
+Future<Document> dpgsGetTournaments() =>
+    dpgsGetRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
+
+Iterable<Element> dpgsGetPlayerKeyedTableAnchors(Document d) =>
+    d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
+
+Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d) =>
+    dpgsGetPlayerKeyedTableAnchors(d).map((e) => ancestorByTag(e, 'tr'));
+
+Iterable<Element> dpgsGetEventBoxes(Document d) =>
+    stride(d.querySelectorAll("div.EventBox"), 2);
+
+Future<Document> dpgsGetTop50Raw(String year) =>
+    dpgsGetRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
+
+Future<Iterable<Tournament>> dpgsGetTournamentsData() => dpgsGetTournaments()
+    .then(dpgsGetEventBoxes)
+    .then((e) => e.map(dpgsGetEventData));
+
+Future<Iterable<String>> dpgsGetTournamentTeamRoster(String teamid) =>
+    dpgsGetRaw('Events/Tournaments/Teams/Default.aspx', {'team': teamid}).then(
+        (doc) => dpgsGetPlayerKeyedTableAnchors(doc)
+            .map(dpgsGetIdName)
+            .map((p) => p.item1));
+
+Iterable<Element> dpgsGetTournamentTeamAnchors(Document d) =>
+    d.querySelectorAll('a[href*="Tournaments/Teams/Default.aspx"]');
+
+String getID(Element anchor) {
+  final href = anchor.attributes['href'];
+  return href.substring(href.lastIndexOf('=') + 1);
+}
+
+Future<Iterable<String>> dpgsGetTournamentTeams(String eventid) async =>
+    dpgsGetRaw('Events/TournamentTeams.aspx', {'event': eventid})
+        .then(dpgsGetTournamentTeamAnchors)
+        .then((e) => e.map(getID));
+
+Tuple2<String, String> dpgsGetIdName(Element e) => new Tuple2(getID(e), e.text);
+
 Future<Iterable<Player>> dpgsGetTop50(String year) => dpgsGetTop50Raw(year)
-    .then((d) => dpgsGetPlayerKeyedTableRows(d, 4).map((r) {
+    .then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
           var idname = dpgsGetIdName(r.querySelector('a'));
           return new Player.unpopulated(
               idname.item1, idname.item2, r.children[2].text, year);
         }));
 
 Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
-    dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d, 2).map((r) {
+    dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
           var idname = dpgsGetIdName(r.children[0].children[0]);
           return new Player.unpopulated(idname.item1, idname.item2,
               r.children[1].text, r.children[2].text);
         }));
 
 Tournament dpgsGetEventData(Element ebox) {
-  var date =
+  final date =
       ebox.querySelector('div[style="font-weight:bold; float:left"]').text;
-  var titleLocElem = ebox.querySelector("center");
-  var titleElem = titleLocElem.querySelector("strong");
-  var title = titleElem.text;
-  var location = titleLocElem; // .textNodes().get(0).text()
-  return new Tournament(title, date, "");
+  final titleLocElem = ebox.querySelector("center");
+  final titleElem = titleLocElem.querySelector("strong");
+  final title = titleElem.text;
+  final location = titleLocElem.nodes[2].text;
+  final id = getID(ancestorByTag(ebox, 'a'));
+  return new Tournament(id, title, date, location);
 }
