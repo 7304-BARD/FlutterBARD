@@ -24,6 +24,16 @@ class HPButton extends StatelessWidget {
       ));
 }
 
+class HPNavButton extends StatelessWidget {
+  final String label;
+  final WidgetBuilder builder;
+  HPNavButton(this.label, this.builder);
+
+  Widget build(BuildContext con) => new HPButton(label, () {
+        Navigator.of(con).push(new MaterialPageRoute<Null>(builder: builder));
+      });
+}
+
 class HomePage extends StatelessWidget {
   final FirebaseUser user;
 
@@ -40,18 +50,8 @@ class HomePage extends StatelessWidget {
       ]),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
         new HPButton("My Calendar", null),
-        new HPButton("My Watchlist", () {
-          Navigator.of(con).push(new MaterialPageRoute<Null>(
-              builder: (BuildContext con) => new Watchlist()));
-        }),
-        new HPButton(
-          "Top 50",
-          () {
-            Navigator.of(con).push(new MaterialPageRoute<Null>(
-                  builder: (BuildContext con) => new Top50("2016"),
-                ));
-          },
-        ),
+        new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
+        new HPNavButton("Top 50", (BuildContext con) => new Top50("2016")),
         new HPButton(
           "Map",
           () {
@@ -64,13 +64,6 @@ class HomePage extends StatelessWidget {
             }
           },
         ),
-        new HPButton(
-          "Tournaments",
-          () {
-            Navigator.of(con).push(new MaterialPageRoute<Null>(
-                  builder: (BuildContext con) => new Tournaments(),
-                ));
-          },
-        ),
+        new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
       ]));
 }
