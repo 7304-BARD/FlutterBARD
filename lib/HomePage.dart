@@ -52,18 +52,6 @@ class HomePage extends StatelessWidget {
         new HPButton("My Calendar", null),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
         new HPNavButton("Top 50", (BuildContext con) => new Top50("2016")),
-        new HPButton(
-          "Map",
-          () {
-            if (Platform.isAndroid) {
-              new AndroidIntent(
-                      action: 'action_view',
-                      data:
-                          'https://www.google.com/maps/dir/?api=1&destination_place_id=ChIJv78fsWEE9YgR3Zqua8Olkw0&destination=Russ+Chandler+Stadium')
-                  .launch();
-            }
-          },
-        ),
         new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
       ]));
 }
