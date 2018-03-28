@@ -19,6 +19,7 @@ class Player {
   String town;
   String teamSummer;
   String teamFall;
+  String photoUrl;
   bool populated;
   bool watchlist;
 
@@ -46,6 +47,9 @@ class Player {
     teamSummer =
         html.querySelector("#ContentPlaceHolder1_Bio1_lblSummerTeam").text;
     teamFall = html.querySelector("#ContentPlaceHolder1_Bio1_lblFallTeam").text;
+    photoUrl = html
+        .querySelector("#ContentPlaceHolder1_Bio1_imgMainPlayerImage")
+        .attributes['src'];
     populated = true;
   }
 
@@ -67,6 +71,7 @@ class Player {
     town = kv['town'];
     teamSummer = kv['teamSummer'];
     teamFall = kv['teamFall'];
+    photoUrl = kv['photoUrl'];
     populated = true;
   }
 
@@ -88,6 +93,7 @@ class Player {
         "town": town,
         "teamSummer": teamSummer,
         "teamFall": teamFall,
+        "photoUrl": photoUrl,
       };
 
   void addIfNonNull(

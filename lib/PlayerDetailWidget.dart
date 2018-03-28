@@ -47,9 +47,17 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
                       .whenComplete(() => setState(() => null));
                 })
           ]),
-          body: new Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: new List.unmodifiable(
-                  widget.player.detailMap().map((p) => new KVText(p))))));
+          body: new SingleChildScrollView(
+              child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    new Center(
+                        child: new Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: widget.player.photoUrl == null
+                                ? new CircularProgressIndicator()
+                                : new Image.network(widget.player.photoUrl)))
+                  ]..addAll(
+                      widget.player.detailMap().map((p) => new KVText(p)))))));
 }
