@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'dpgs.dart';
 import 'Player.dart';
-import 'PlayerDetailWidget.dart';
 import 'PlayerListElementWidget.dart';
 
 class Top50 extends StatefulWidget {
@@ -27,9 +26,5 @@ class Top50State extends State<Top50> {
       appBar: new AppBar(title: new Text("Top Players of ${widget.year}")),
       body: new ListView(
           children: new List.unmodifiable(
-              players.map((p) => new PlayerListElementWidget(p, () {
-                    Navigator.of(con).push(new MaterialPageRoute<Null>(
-                        builder: (BuildContext con) =>
-                            new PlayerDetailWidget(p)));
-                  })))));
+              players.map((p) => new PlayerListElementWidget(p)))));
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'Player.dart';
 import 'PlayerCache.dart';
-import 'PlayerDetailWidget.dart';
 import 'PlayerListElementWidget.dart';
 import 'Search.dart';
 
@@ -37,13 +36,6 @@ class WatchlistState extends State<Watchlist> {
                 .then((_) => refreshPlayers());
           }),
       body: new ListView(
-          children: new List.unmodifiable(
-              players.map((p) => new PlayerListElementWidget(p, () {
-                    Navigator
-                        .of(con)
-                        .push(new MaterialPageRoute<Null>(
-                            builder: (BuildContext con) =>
-                                new PlayerDetailWidget(p)))
-                        .then((_) => refreshPlayers());
-                  })))));
+          children: new List.unmodifiable(players
+              .map((p) => new PlayerListElementWidget(p, refreshPlayers)))));
 }
