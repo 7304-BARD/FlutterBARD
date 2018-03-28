@@ -8,6 +8,18 @@ class Register extends StatefulWidget {
   createState() => new RegisterState();
 }
 
+class TF extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
+  final bool password;
+
+  TF(this.label, this.controller, {this.password = false});
+  build(BuildContext con) => new TextField(
+      decoration: new InputDecoration(labelText: label),
+      controller: controller,
+      obscureText: password);
+}
+
 class RegisterState extends State<Register> {
   final nameCon = new TextEditingController();
   final emailCon = new TextEditingController();
@@ -23,25 +35,11 @@ class RegisterState extends State<Register> {
             child: new SingleChildScrollView(
               child: new Column(
                 children: [
-                  new TextField(
-                      decoration: new InputDecoration(labelText: "Name"),
-                      controller: nameCon),
-                  new TextField(
-                      decoration: new InputDecoration(labelText: "Email"),
-                      controller: emailCon),
-                  new TextField(
-                      decoration: new InputDecoration(labelText: "Password"),
-                      obscureText: true,
-                      controller: passCon),
-                  new TextField(
-                      decoration:
-                          new InputDecoration(labelText: "Confirm password"),
-                      obscureText: true,
-                      controller: passConCon),
-                  new TextField(
-                      decoration:
-                          new InputDecoration(labelText: "Organization"),
-                      controller: orgCon),
+                  new TF("Name", nameCon),
+                  new TF("Email", emailCon),
+                  new TF("Password", passCon, password: true),
+                  new TF("Confirm password", passConCon, password: true),
+                  new TF("Organization", orgCon),
                   new HPButton("Submit", () async {
                     if (passCon.text == passConCon.text) {
                       await FirebaseAuth.instance

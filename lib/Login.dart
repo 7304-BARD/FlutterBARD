@@ -20,24 +20,15 @@ class LoginState extends State<Login> {
             padding: new EdgeInsets.all(20.0),
             child: new Column(
               children: [
-                new TextField(
-                    decoration: new InputDecoration(labelText: "Email"),
-                    controller: emailCon),
-                new TextField(
-                    decoration: new InputDecoration(labelText: "Password"),
-                    obscureText: true,
-                    controller: passCon),
+                new TF("Email", emailCon),
+                new TF("Password", passCon, password: true),
                 new HPButton('Login', () async {
-                  final email = emailCon.text;
-                  final password = passCon.text;
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email, password: password);
+                      email: emailCon.text, password: passCon.text);
                   Navigator.of(context).pushReplacementNamed('/');
                 }),
-                new HPButton('Register', () {
-                  Navigator.of(context).push(new MaterialPageRoute<Null>(
-                      builder: (BuildContext con) => new Register()));
-                }),
+                new HPNavButton(
+                    'Register', (BuildContext con) => new Register()),
               ],
             )));
   }
