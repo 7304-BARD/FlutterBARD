@@ -19,8 +19,8 @@ class Player {
   String town;
   String teamSummer;
   String teamFall;
-  bool watchlist = false;
   bool populated;
+  bool watchlist;
 
   Player(this.pgid, Document html) {
     populate(html);
@@ -67,7 +67,6 @@ class Player {
     town = kv['town'];
     teamSummer = kv['teamSummer'];
     teamFall = kv['teamFall'];
-    watchlist = kv['watchlist'];
     populated = true;
   }
 
@@ -89,7 +88,6 @@ class Player {
         "town": town,
         "teamSummer": teamSummer,
         "teamFall": teamFall,
-        "watchlist": watchlist,
       };
 
   void addIfNonNull(
@@ -113,5 +111,14 @@ class Player {
     addIfNonNull(details, "Summer team", teamSummer);
     addIfNonNull(details, "Fall team", teamFall);
     return details;
+  }
+
+  Future<bool> isWatched() async {
+    if (watchlist == null) {
+      final pc = new PlayerCache();
+      await pc.init();
+      watchlist = (await pc.getWatchlistIds()).contains(pgid);
+    }
+    return watchlist;
   }
 }

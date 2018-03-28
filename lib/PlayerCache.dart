@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:path_provider/path_provider.dart';
@@ -78,18 +76,16 @@ class PlayerCache {
     if (!wl.contains(p.pgid)) {
       wl = new List.from(wl);
       wl.add(p.pgid);
-      debugPrint("$wl");
       await setWatchlistIds(wl);
-      await db.put(p.toMap(), p.pgid);
     }
   }
 
   Future<Null> removeFromWatchlist(Player p) async {
     p.watchlist = false;
     final wl = new List.from(await getWatchlistIds());
-    if (wl.remove(p.pgid)) {
-      await setWatchlistIds(wl);
-      await db.put(p.toMap(), p.pgid);
-    }
+    if (wl.remove(p.pgid)) await setWatchlistIds(wl);
   }
+
+  Future<Null> toggleWatchlist(Player p) async =>
+      await p.isWatched() ? removeFromWatchlist(p) : addToWatchlist(p);
 }

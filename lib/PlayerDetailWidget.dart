@@ -28,26 +28,23 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
 
   initState() {
     super.initState();
-    if (!widget.player.populated) {
-      widget.player.populateAsync(pcache).then((_) {
-        setState(() {});
-      });
-    }
+    widget.player.isWatched().whenComplete(() => setState(() {}));
+    if (!widget.player.populated)
+      widget.player.populateAsync(pcache).whenComplete(() => setState(() {}));
   }
 
   Widget build(BuildContext con) => new Align(
       child: new Scaffold(
           appBar: new AppBar(title: new Text(widget.player.name), actions: [
             new IconButton(
-                icon: new Icon(
-                    widget.player.watchlist ? Icons.star : Icons.star_border),
+                icon: new Icon(widget.player.watchlist == null
+                    ? Icons.cloud_off
+                    : widget.player.watchlist ? Icons.star : Icons.star_border),
                 onPressed: () {
-                  (widget.player.watchlist
-                          ? pcache.init().then(
-                              (_) => pcache.removeFromWatchlist(widget.player))
-                          : pcache.init().then(
-                              (_) => pcache.addToWatchlist(widget.player)))
-                      .then((_) => setState(() => null));
+                  pcache
+                      .init()
+                      .whenComplete(() => pcache.toggleWatchlist(widget.player))
+                      .whenComplete(() => setState(() => null));
                 })
           ]),
           body: new Column(
