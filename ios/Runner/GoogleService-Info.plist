@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>577334348997-gmcco9fiqb4frf06p9ov6toa63knm8s4.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.577334348997-gmcco9fiqb4frf06p9ov6toa63knm8s4</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBwdZffdrzqKe1ghG2ZKBRIl2gAt4VsZK8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>577334348997</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.flutterbard.baseballrecruitments</string>
+	<key>PROJECT_ID</key>
+	<string>recruitmentapp-409cd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>recruitmentapp-409cd.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:577334348997:ios:da9e5210a90cef70</string>
+	<key>DATABASE_URL</key>
+	<string>https://recruitmentapp-409cd.firebaseio.com</string>
+</dict>
+</plist>
