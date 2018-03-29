@@ -37,11 +37,12 @@ class TournamentsState extends State<Tournaments> {
 }
 
 class TeamListElement extends StatelessWidget {
-  final Team t;
-  TeamListElement(this.t);
+  final Team team;
+  final Tournament tournament;
+  TeamListElement(this.team, this.tournament);
 
-  build(BuildContext con) =>
-      new HPNavButton(t.name, (BuildContext c) => new TeamRosterListing(t));
+  build(BuildContext con) => new HPNavButton(
+      team.name, (BuildContext c) => new TeamRosterListing(team, tournament));
 }
 
 class TournamentTeamListing extends StatefulWidget {
@@ -63,33 +64,41 @@ class TournamentTeamListingState extends State<TournamentTeamListing> {
   build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text(widget.tournament.title)),
       body: new ListView(
-          children: teams.map((t) => new TeamListElement(t)).toList()));
+          children: teams
+              .map((t) => new TeamListElement(t, widget.tournament))
+              .toList()));
 }
 
 class TeamRosterListing extends StatefulWidget {
   final Team team;
-  TeamRosterListing(this.team);
+  final Tournament tournament;
+  TeamRosterListing(this.team, this.tournament);
 
   createState() => new TeamRosterListingState();
 }
 
 class TeamRosterListingState extends State<TeamRosterListing> {
   List<Player> players = [];
+  List<String> playtimes = [];
+
+  void fetchDoc() async {
+    final doc = await dpgsGetTournamentTeamPage(widget.team);
+    playtimes = dpgsGetTournamentTeamPlaytimes(doc).toList();
+    setState(() {
+      players = dpgsGetTournamentTeamRoster(doc).toList();
+    });
+  }
 
   initState() {
     super.initState();
-    dpgsGetTournamentTeamPage(widget.team)
-        .then((d) => dpgsGetTournamentTeamRoster(d))
-        .then((p) {
-      setState(() {
-        players = p.toList();
-      });
-    });
+    fetchDoc();
   }
 
   build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text(widget.team.name)),
       body: new ListView(
-          children:
-              players.map((p) => new PlayerListElementWidget(p)).toList()));
+          children: []
+            ..addAll(playtimes.map((p) => new Padding(
+                padding: new EdgeInsets.all(8.0), child: new Text(p))))
+            ..addAll(players.map((p) => new PlayerListElementWidget(p)))));
 }
