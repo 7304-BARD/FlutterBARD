@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:html/dom.dart';
+import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
 
 import 'PlayerCache.dart';
@@ -53,7 +54,11 @@ class Player {
     populated = true;
   }
 
-  Player.unpopulated(this.pgid, this.name, this.pos, this.year) {
+  Player.unpopulated(
+      {@required this.pgid,
+      @required this.name,
+      @required this.pos,
+      @required this.year}) {
     populated = false;
   }
 

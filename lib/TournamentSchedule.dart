@@ -1,7 +1,10 @@
-class TournamentSchedule {
-  final List<String> teamids;
-  final List<String> rosters;
-  final List<String> playtimes;
+import 'Player.dart';
+import 'Team.dart';
 
-  TournamentSchedule(this.teamids, this.rosters, this.playtimes);
+class TournamentSchedule {
+  final List<Team> teams;
+  final List<List<Player>> rosters;
+  final List<List<String>> playtimes;
+
+  TournamentSchedule(this.teams, this.rosters, this.playtimes);
 }

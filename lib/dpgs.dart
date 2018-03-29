@@ -8,6 +8,7 @@ import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
 
 import 'Player.dart';
+import 'Team.dart';
 import 'Tournament.dart';
 import 'TournamentSchedule.dart';
 
@@ -68,11 +69,18 @@ Future<Iterable<Tournament>> dpgsGetTournamentsData() => dpgsGetTournaments()
     .then(dpgsGetEventBoxes)
     .then((e) => e.map(dpgsGetEventData));
 
-Future<Document> dpgsGetTournamentTeamPage(String teamid) =>
-    dpgsGetRaw('Events/Tournaments/Teams/Default.aspx', {'team': teamid});
+Future<Document> dpgsGetTournamentTeamPage(Team t) =>
+    dpgsGetRaw('Events/Tournaments/Teams/Default.aspx', {'team': t.id});
 
-Iterable<String> dpgsGetTournamentTeamRoster(Document doc) =>
-    dpgsGetPlayerKeyedTableAnchors(doc).map(dpgsGetIdName).map((p) => p.item1);
+Iterable<Player> dpgsGetTournamentTeamRoster(Document doc) =>
+    doc.querySelectorAll('tr a[id*="Roster"]').map((r) {
+      final Element row = ancestorByTag(r, 'tr');
+      return new Player.unpopulated(
+          pgid: getID(r),
+          name: r.text,
+          pos: row.querySelector('*[id*="Position"]').text,
+          year: new RegExp(r'20\d\d').stringMatch(row.text));
+    });
 
 Iterable<String> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
     .querySelectorAll('div.repbg')
@@ -86,10 +94,20 @@ String getID(Element anchor) {
   return href.substring(href.lastIndexOf('=') + 1);
 }
 
-Future<Iterable<String>> dpgsGetTournamentTeams(String eventid) async =>
-    dpgsGetRaw('Events/TournamentTeams.aspx', {'event': eventid})
-        .then(dpgsGetTournamentTeamAnchors)
-        .then((e) => e.map(getID));
+Future<Iterable<String>> _expandEventIds(Tournament t) async =>
+    t.isGroup ? await dpgsGetEventsForEventGroup(t.id) : [t.id];
+
+Future<Iterable<Team>> dpgsGetEventTeams(String eventid) async => dpgsGetRaw(
+        'Events/TournamentTeams.aspx', {'event': eventid})
+    .then(dpgsGetTournamentTeamAnchors)
+    .then((e) => e.map(dpgsGetIdName).map((t) => new Team(t.item1, t.item2)));
+
+Future<Iterable<Team>> dpgsGetTournamentTeams(Tournament t) async {
+  final teams = <Team>[];
+  for (final e in await _expandEventIds(t))
+    teams.addAll(await dpgsGetEventTeams(e));
+  return teams;
+}
 
 Future<Iterable<String>> dpgsGetEventsForEventGroup(String gid) async =>
     (await dpgsGetRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))
@@ -98,22 +116,19 @@ Future<Iterable<String>> dpgsGetEventsForEventGroup(String gid) async =>
         .map(getID);
 
 Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
-  final Iterable<String> events =
-      t.isGroup ? await dpgsGetEventsForEventGroup(t.id) : [t.id];
-
-  final teamids = <String>[];
-  for (var f in events.map(dpgsGetTournamentTeams))
-    for (var t in await f) teamids.add(t);
+  final teams = (await dpgsGetTournamentTeams(t)).toList();
 
   final tpages = <Document>[];
-  for (var f in teamids.map(dpgsGetTournamentTeamPage)) tpages.add(await f);
+  for (var f in teams.map(dpgsGetTournamentTeamPage)) tpages.add(await f);
 
   final rosters =
-      new List.unmodifiable(tpages.map(dpgsGetTournamentTeamRoster));
-  final playtimes =
-      new List.unmodifiable(tpages.map(dpgsGetTournamentTeamPlaytimes));
+      tpages.map(dpgsGetTournamentTeamRoster).map((r) => r.toList()).toList();
+  final playtimes = tpages
+      .map(dpgsGetTournamentTeamPlaytimes)
+      .map((p) => p.toList())
+      .toList();
 
-  return new TournamentSchedule(teamids, rosters, playtimes);
+  return new TournamentSchedule(teams, rosters, playtimes);
 }
 
 Tuple2<String, String> dpgsGetIdName(Element e) => new Tuple2(getID(e), e.text);
@@ -122,14 +137,20 @@ Future<Iterable<Player>> dpgsGetTop50(String year) =>
     dpgsGetTop50Raw(year).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
           var idname = dpgsGetIdName(r.querySelector('a'));
           return new Player.unpopulated(
-              idname.item1, idname.item2, r.children[2].text, year);
+              pgid: idname.item1,
+              name: idname.item2,
+              pos: r.children[2].text,
+              year: year);
         }));
 
 Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
     dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
           var idname = dpgsGetIdName(r.children[0].children[0]);
-          return new Player.unpopulated(idname.item1, idname.item2,
-              r.children[1].text, r.children[2].text);
+          return new Player.unpopulated(
+              pgid: idname.item1,
+              name: idname.item2,
+              pos: r.children[1].text,
+              year: r.children[2].text);
         }));
 
 Tournament dpgsGetEventData(Element ebox) {
