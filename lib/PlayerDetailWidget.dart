@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:tuple/tuple.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Player.dart';
 import 'PlayerCache.dart';
@@ -57,7 +59,13 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
                             padding: const EdgeInsets.all(8.0),
                             child: widget.player.photoUrl == null
                                 ? new CircularProgressIndicator()
-                                : new Image.network(widget.player.photoUrl)))
+                                : new GestureDetector(
+                                    onTap: () {
+                                      launch(
+                                          'https://perfectgame.org/Players/Playerprofile.aspx?id=${widget.player.pgid}');
+                                    },
+                                    child: new Image.network(
+                                        widget.player.photoUrl))))
                   ]..addAll(
                       widget.player.detailMap().map((p) => new KVText(p)))))));
 }

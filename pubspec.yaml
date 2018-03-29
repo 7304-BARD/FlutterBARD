@@ -14,6 +14,7 @@ dependencies:
   range: ^1.1.1
   shared_preferences: ^0.4.0
   tuple: ^1.0.1
+  url_launcher: ^3.0.0
   sembast: ^1.7.0
   sqflite: ^0.8.4
   cupertino_icons: ^0.1.1
