@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'TapNav.dart';
 import 'Top50.dart';
@@ -33,31 +32,9 @@ class HPNavButton extends StatelessWidget {
 
 class HomePage extends StatelessWidget {
   final FirebaseUser user;
-  final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
-
   HomePage(this.user);
 
-  Widget build(BuildContext con) {
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) { print("onMessage: $message"); },
-      onLaunch: (Map<String, dynamic> message) { print("onLaunch: $message"); },
-      onResume: (Map<String, dynamic> message) { print("onResume: $message"); },
-    );
-
-    _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(
-      sound: true, alert: true, badge: true
-    ));
-
-    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
-      print("iOS settings registered: $settings");
-    });
-    
-    _firebaseMessaging.getToken().then((String token){
-      assert(token != null);
-      print("Token: $token");
-    });
-
-    return new Scaffold(
+  Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text("BARD"), actions: [
         new IconButton(
             icon: new Icon(Icons.lock),
@@ -73,6 +50,4 @@ class HomePage extends StatelessWidget {
             "Top Players by Year", (BuildContext con) => new Top50()),
         new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
       ]));
-  }
 }
-
