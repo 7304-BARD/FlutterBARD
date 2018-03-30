@@ -4,6 +4,7 @@ import 'Player.dart';
 import 'PlayerCache.dart';
 import 'PlayerListElementWidget.dart';
 import 'Search.dart';
+import 'TapNav.dart';
 
 class Watchlist extends StatefulWidget {
   State<StatefulWidget> createState() => new WatchlistState();
@@ -27,14 +28,10 @@ class WatchlistState extends State<Watchlist> {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text("My Watchlist")),
       floatingActionButton: new FloatingActionButton(
-          child: new Icon(Icons.search),
-          onPressed: () {
-            Navigator
-                .of(con)
-                .push(new MaterialPageRoute<Null>(
-                    builder: (BuildContext con) => new PlayerSearchWidget()))
-                .then((_) => refreshPlayers());
-          }),
+        child: new Icon(Icons.search),
+        onPressed: tapNav((BuildContext con) => new PlayerSearchWidget(), con,
+            () => refreshPlayers()),
+      ),
       body: new ListView(
           children: new List.unmodifiable(players
               .map((p) => new PlayerListElementWidget(p, refreshPlayers)))));

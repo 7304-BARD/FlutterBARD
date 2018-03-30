@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'dpgs.dart';
-import 'HomePage.dart';
 import 'Player.dart';
 import 'PlayerListElementWidget.dart';
+import 'TapNav.dart';
 import 'Team.dart';
 import 'TournamentListElementWidget.dart';
 import 'Tournament.dart';
@@ -28,12 +28,11 @@ class TournamentsState extends State<Tournaments> {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text("Tournaments")),
       body: new ListView(
-          children: new List.unmodifiable(
-              tournaments.map((t) => new TournamentListElementWidget(t, () {
-                    Navigator.of(con).push(new MaterialPageRoute<Null>(
-                        builder: (BuildContext con) =>
-                            new TournamentTeamListing(t)));
-                  })))));
+          children: new List.unmodifiable(tournaments.map((t) =>
+              new TournamentListElementWidget(
+                  t,
+                  tapNav((BuildContext con) => new TournamentTeamListing(t),
+                      con))))));
 }
 
 class TeamListElement extends StatelessWidget {
@@ -41,8 +40,12 @@ class TeamListElement extends StatelessWidget {
   final Tournament tournament;
   TeamListElement(this.team, this.tournament);
 
-  build(BuildContext con) => new HPNavButton(
-      team.name, (BuildContext c) => new TeamRosterListing(team, tournament));
+  build(BuildContext con) => new TapNav(
+      child: new Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: new Text(team.name,
+              style: const TextStyle(fontWeight: FontWeight.bold))),
+      builder: (BuildContext con) => new TeamRosterListing(team, tournament));
 }
 
 class TournamentTeamListing extends StatefulWidget {
@@ -99,6 +102,7 @@ class TeamRosterListingState extends State<TeamRosterListing> {
       body: new ListView(
           children: []
             ..addAll(playtimes.map((p) => new Padding(
-                padding: new EdgeInsets.all(8.0), child: new Text(p.toIso8601String()))))
+                padding: new EdgeInsets.all(8.0),
+                child: new Text(p.toIso8601String()))))
             ..addAll(players.map((p) => new PlayerListElementWidget(p)))));
 }

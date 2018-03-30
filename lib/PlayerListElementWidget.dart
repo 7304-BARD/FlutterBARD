@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'Player.dart';
 import 'PlayerDetailWidget.dart';
+import 'TapNav.dart';
 
 void nop() {}
 
@@ -14,13 +15,9 @@ class PlayerListElementWidget extends StatefulWidget {
 }
 
 class PlayerListElementWidgetState extends State<PlayerListElementWidget> {
-  Widget build(BuildContext con) => new GestureDetector(
-      onTap: () => Navigator
-          .of(con)
-          .push(new MaterialPageRoute<Null>(
-              builder: (BuildContext con) =>
-                  new PlayerDetailWidget(widget.player)))
-          .whenComplete(widget.onDismissed),
+  Widget build(BuildContext con) => new TapNav<Null>(
+      builder: (BuildContext con) => new PlayerDetailWidget(widget.player),
+      onDismissed: (widget.onDismissed),
       child: new Row(
         children: [
           new Expanded(

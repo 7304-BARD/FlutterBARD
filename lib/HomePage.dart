@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
-import 'package:android_intent/android_intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'TapNav.dart';
 import 'Top50.dart';
 import 'Tournaments.dart';
 import 'Watchlist.dart';
@@ -29,9 +27,7 @@ class HPNavButton extends StatelessWidget {
   final WidgetBuilder builder;
   HPNavButton(this.label, this.builder);
 
-  Widget build(BuildContext con) => new HPButton(label, () {
-        Navigator.of(con).push(new MaterialPageRoute<Null>(builder: builder));
-      });
+  Widget build(BuildContext con) => new HPButton(label, tapNav(builder, con));
 }
 
 class HomePage extends StatelessWidget {
