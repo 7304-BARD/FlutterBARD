@@ -8,6 +8,7 @@ dependencies:
   async_loader: ^0.1.1
   firebase_auth: ^0.5.2
   firebase_database: ^0.4.1
+  firebase_messaging: ^0.2.1
   html: ^0.13.3
   meta: ^1.1.2
   path_provider: ^0.4.0
