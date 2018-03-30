@@ -33,13 +33,14 @@ class NotesWidget extends StatelessWidget {
   final List<String> notes;
   NotesWidget(this.notes);
 
-  Widget build(BuildContext con) => new Column(
+  Widget build(BuildContext con) => new Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-        new Align(
-            alignment: Alignment.topLeft,
-            child: const Text("Notes",
-                style: const TextStyle(fontWeight: FontWeight.bold)))
-      ]..addAll(notes.map((n) => new NoteWidget(n))));
+            const Text("Notes:",
+                style: const TextStyle(fontWeight: FontWeight.bold))
+          ]..addAll(notes.map((n) => new NoteWidget(n)))));
 }
 
 class PlayerDetailWidget extends StatefulWidget {

@@ -10,12 +10,23 @@ class PlayerNoteEntry extends StatefulWidget {
 }
 
 class PlayerNoteEntryState extends State<PlayerNoteEntry> {
+  final cont = new TextEditingController();
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("${widget.player.name} notes")),
-      body: new TextField(
-          decoration: new InputDecoration(icon: new Icon(Icons.note)),
-          onSubmitted: (q) {
-            new PlayerCache().pushPlayerNote(widget.player, q);
-            Navigator.of(con).pop();
-          }));
+      appBar:
+          new AppBar(title: new Text("${widget.player.name} notes"), actions: [
+        new IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              new PlayerCache().pushPlayerNote(widget.player, cont.text);
+              Navigator.of(con).pop();
+            }),
+      ]),
+      body: new Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: new TextField(
+            autofocus: true,
+            controller: cont,
+            decoration: new InputDecoration(icon: new Icon(Icons.note)),
+            maxLines: 30,
+          )));
 }
