@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
-import 'package:android_intent/android_intent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'TapNav.dart';
 import 'Top50.dart';
 import 'Tournaments.dart';
 import 'Watchlist.dart';
@@ -30,9 +28,7 @@ class HPNavButton extends StatelessWidget {
   final WidgetBuilder builder;
   HPNavButton(this.label, this.builder);
 
-  Widget build(BuildContext con) => new HPButton(label, () {
-        Navigator.of(con).push(new MaterialPageRoute<Null>(builder: builder));
-      });
+  Widget build(BuildContext con) => new HPButton(label, tapNav(builder, con));
 }
 
 class HomePage extends StatelessWidget {
@@ -62,19 +58,21 @@ class HomePage extends StatelessWidget {
     });
 
     return new Scaffold(
-        appBar: new AppBar(title: new Text("BARD"), actions: [
-          new IconButton(
-              icon: new Icon(Icons.lock),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(con).pushReplacementNamed('/');
-              })
-        ]),
-        body: new ListView(padding: new EdgeInsets.all(20.0), children: [
-          new HPButton("My Calendar", null),
-          new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
-          new HPNavButton("Top 50", (BuildContext con) => new Top50("2016")),
-          new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
-        ]));
+      appBar: new AppBar(title: new Text("BARD"), actions: [
+        new IconButton(
+            icon: new Icon(Icons.lock),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(con).pushReplacementNamed('/');
+            })
+      ]),
+      body: new ListView(padding: new EdgeInsets.all(20.0), children: [
+        new HPButton("My Calendar", null),
+        new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
+        new HPNavButton(
+            "Top Players by Year", (BuildContext con) => new Top50()),
+        new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
+      ]));
   }
 }
+
