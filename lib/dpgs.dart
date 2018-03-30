@@ -82,9 +82,23 @@ Iterable<Player> dpgsGetTournamentTeamRoster(Document doc) =>
           year: new RegExp(r'20\d\d').stringMatch(row.text));
     });
 
-Iterable<String> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
+DateTime _parsePGDateTime(String s) {
+  final match = new RegExp(
+          r'^\s*(\d?\d)/(\d?\d)/(\d\d\d\d)\s*(\d?\d):(\d\d)\s*(A|P)M\s*$')
+      .firstMatch(s);
+  final dt = new DateTime(
+      int.parse(match[3]),
+      int.parse(match[1]),
+      int.parse(match[2]),
+      (int.parse(match[4]) % 12) + (match[6] == 'A' ? 0 : 12),
+      int.parse(match[5]));
+  return dt;
+}
+
+Iterable<DateTime> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
     .querySelectorAll('div.repbg')
-    .map((e) => e.querySelector('div.col-lg-3').children[1].text);
+    .map((e) => e.querySelector('div.col-lg-3').children[1].text)
+    .map(_parsePGDateTime);
 
 Iterable<Element> dpgsGetTournamentTeamAnchors(Document d) =>
     d.querySelectorAll('a[href*="Tournaments/Teams/Default.aspx"]');

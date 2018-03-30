@@ -79,7 +79,7 @@ class TeamRosterListing extends StatefulWidget {
 
 class TeamRosterListingState extends State<TeamRosterListing> {
   List<Player> players = [];
-  List<String> playtimes = [];
+  List<DateTime> playtimes = [];
 
   void fetchDoc() async {
     final doc = await dpgsGetTournamentTeamPage(widget.team);
@@ -99,6 +99,6 @@ class TeamRosterListingState extends State<TeamRosterListing> {
       body: new ListView(
           children: []
             ..addAll(playtimes.map((p) => new Padding(
-                padding: new EdgeInsets.all(8.0), child: new Text(p))))
+                padding: new EdgeInsets.all(8.0), child: new Text(p.toIso8601String()))))
             ..addAll(players.map((p) => new PlayerListElementWidget(p)))));
 }
