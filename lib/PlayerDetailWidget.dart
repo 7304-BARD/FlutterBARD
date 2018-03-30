@@ -5,6 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'Player.dart';
 import 'PlayerCache.dart';
+import 'PlayerNoteEntry.dart';
+import 'TapNav.dart';
 
 class KVText extends StatelessWidget {
   final Tuple2<String, String> pair;
@@ -18,6 +20,28 @@ class KVText extends StatelessWidget {
       ]));
 }
 
+class NoteWidget extends StatelessWidget {
+  final String note;
+  NoteWidget(this.note);
+
+  Widget build(BuildContext con) => new Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: new Text(note));
+}
+
+class NotesWidget extends StatelessWidget {
+  final List<String> notes;
+  NotesWidget(this.notes);
+
+  Widget build(BuildContext con) => new Column(
+          children: [
+        new Align(
+            alignment: Alignment.topLeft,
+            child: const Text("Notes",
+                style: const TextStyle(fontWeight: FontWeight.bold)))
+      ]..addAll(notes.map((n) => new NoteWidget(n))));
+}
+
 class PlayerDetailWidget extends StatefulWidget {
   final Player player;
 
@@ -27,17 +51,32 @@ class PlayerDetailWidget extends StatefulWidget {
 
 class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
   PlayerCache pcache = new PlayerCache();
+  List<String> notes = [];
 
   initState() {
     super.initState();
     widget.player.isWatched().whenComplete(() => setState(() {}));
     if (!widget.player.populated)
       widget.player.populateAsync(pcache).whenComplete(() => setState(() {}));
+    refreshNotes();
+  }
+
+  void refreshNotes() async {
+    final n = await pcache.getPlayerNotes(widget.player);
+    setState(() {
+      notes = n;
+    });
   }
 
   Widget build(BuildContext con) => new Align(
       child: new Scaffold(
           appBar: new AppBar(title: new Text(widget.player.name), actions: [
+            new IconButton(
+                icon: new Icon(Icons.note_add),
+                onPressed: tapNav(
+                    (BuildContext con) => new PlayerNoteEntry(widget.player),
+                    con,
+                    refreshNotes)),
             new IconButton(
                 icon: new Icon(widget.player.watchlist == null
                     ? Icons.cloud_off
@@ -66,6 +105,8 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
                                     },
                                     child: new Image.network(
                                         widget.player.photoUrl))))
-                  ]..addAll(
-                      widget.player.detailMap().map((p) => new KVText(p)))))));
+                  ]
+                    ..addAll(
+                        widget.player.detailMap().map((p) => new KVText(p)))
+                    ..add(new NotesWidget(notes))))));
 }

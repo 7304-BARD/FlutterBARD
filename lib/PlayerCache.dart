@@ -48,11 +48,26 @@ class PlayerCache {
     return players;
   }
 
-  Future<DatabaseReference> getWatchlistDBRef() async {
+  Future<DatabaseReference> getDBRef() async {
     final fbase = FirebaseDatabase.instance;
-    final uid = (await FirebaseAuth.instance.currentUser()).uid;
     await fbase.setPersistenceEnabled(true);
-    return fbase.reference().child('users/$uid/watchlist');
+    final uid = (await FirebaseAuth.instance.currentUser()).uid;
+    return fbase.reference().child('users/$uid');
+  }
+
+  Future<DatabaseReference> getWatchlistDBRef() async =>
+      (await getDBRef()).child('watchlist');
+
+  Future<DatabaseReference> getNotesDBRef() async =>
+      (await getDBRef()).child('player_notes');
+
+  Future<Null> pushPlayerNote(Player p, String note) async =>
+      (await getNotesDBRef()).child('${p.pgid}').push().set(note);
+
+  Future<List<String>> getPlayerNotes(Player p) async {
+    final dbref = (await getNotesDBRef()).child('${p.pgid}');
+    final notes = ((await dbref.orderByKey().once()).value ?? {}).values;
+    return notes.toList();
   }
 
   Future<List<String>> getWatchlistIds() async {
