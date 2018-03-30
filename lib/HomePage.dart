@@ -51,7 +51,8 @@ class HomePage extends StatelessWidget {
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
         new HPButton("My Calendar", null),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
-        new HPNavButton("Top 50", (BuildContext con) => new Top50("2016")),
+        new HPNavButton(
+            "Top Players by Year", (BuildContext con) => new Top50()),
         new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
       ]));
 }
