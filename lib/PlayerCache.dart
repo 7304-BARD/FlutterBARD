@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tuple/tuple.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
@@ -56,7 +57,7 @@ class PlayerCache {
   }
 
   Future<DatabaseReference> getWatchlistDBRef() async =>
-      (await getDBRef()).child('watchlist');
+      (await getDBRef()).child('watchlist_v2');
 
   Future<DatabaseReference> getNotesDBRef() async =>
       (await getDBRef()).child('player_notes');
@@ -70,36 +71,33 @@ class PlayerCache {
     return notes.toList();
   }
 
-  Future<List<String>> getWatchlistIds() async {
+  Future<List<Tuple2<String, Map<String, dynamic>>>>
+      getWatchlistEntries() async {
     final dbref = await getWatchlistDBRef();
-    final snapshot = await dbref.once();
-    final ids = snapshot.value ?? [];
-    return new List.unmodifiable(ids.where((t) => t != null));
-  }
-
-  Future<Null> setWatchlistIds(List<String> watchlist) async {
-    final dbref = await getWatchlistDBRef();
-    await dbref.set(watchlist);
+    final entries = (await dbref.once()).value ?? {};
+    return entries.keys.map((k) => new Tuple2(k, entries[k])).toList();
   }
 
   Future<List<Player>> getWatchlistPlayers() async =>
-      getPlayersForIds(await getWatchlistIds());
+      (await getWatchlistEntries())
+          .map((m) => new Player.fromWLEntry(m))
+          .toList();
+
+  Future<DatabaseReference> getWatchlistEntryRef(String pgid) async =>
+      (await getWatchlistDBRef()).child(pgid);
 
   Future<Null> addToWatchlist(Player p) async {
     p.watchlist = true;
-    var wl = await getWatchlistIds();
-    if (!wl.contains(p.pgid)) {
-      wl = new List.from(wl);
-      wl.add(p.pgid);
-      await setWatchlistIds(wl);
-    }
+    await (await getWatchlistEntryRef(p.pgid)).set(p.toWLEntry());
   }
 
   Future<Null> removeFromWatchlist(Player p) async {
     p.watchlist = false;
-    final wl = new List.from(await getWatchlistIds());
-    if (wl.remove(p.pgid)) await setWatchlistIds(wl);
+    await (await getWatchlistEntryRef(p.pgid)).remove();
   }
+
+  Future<bool> isWatched(String pgid) async =>
+      (await (await getWatchlistEntryRef(pgid)).once()).value != null;
 
   Future<Null> toggleWatchlist(Player p) async =>
       await p.isWatched() ? removeFromWatchlist(p) : addToWatchlist(p);

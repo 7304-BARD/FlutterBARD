@@ -62,6 +62,16 @@ class Player {
     populated = false;
   }
 
+  Player.fromWLEntry(Tuple2<String, Map<String, dynamic>> wle) {
+    populated = false;
+    pgid = wle.item1;
+    name = wle.item2['name'];
+    year = wle.item2['year'];
+    pos = wle.item2['pos'];
+  }
+
+  toWLEntry() => {'name': name, 'year': year, 'pos': pos};
+
   populateFromMap(Map<String, dynamic> kv) {
     pgid = kv['pgid'];
     name = kv['name'];
@@ -125,11 +135,7 @@ class Player {
   }
 
   Future<bool> isWatched() async {
-    if (watchlist == null) {
-      final pc = new PlayerCache();
-      await pc.init();
-      watchlist = (await pc.getWatchlistIds()).contains(pgid);
-    }
+    if (watchlist == null) watchlist = await new PlayerCache().isWatched(pgid);
     return watchlist;
   }
 }
