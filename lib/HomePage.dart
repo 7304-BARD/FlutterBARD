@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'CalendarUI.dart';
 import 'TapNav.dart';
 import 'Top50.dart';
 import 'Tournaments.dart';
@@ -44,7 +45,8 @@ class HomePage extends StatelessWidget {
             })
       ]),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
-        new HPButton("My Calendar", null),
+        new HPNavButton("My Calendar",
+            (BuildContext con) => new CalendarUI(new DateTime.now())),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
         new HPNavButton(
             "Top Players by Year", (BuildContext con) => new Top50()),
