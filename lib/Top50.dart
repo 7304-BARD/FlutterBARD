@@ -13,12 +13,16 @@ class Top50 extends StatefulWidget {
 class Top50State extends State<Top50> {
   final int yearNow = new DateTime.now().year;
   int year = new DateTime.now().year;
+  List<int> _years = [];
   List<Player> players = [];
 
   refresh() async {
+    final years = await dpgsGetTop50Years();
     final p = await dpgsGetTop50("$year");
+
     setState(() {
       players = p.toList();
+      _years = years.toList();
     });
   }
 
@@ -28,7 +32,7 @@ class Top50State extends State<Top50> {
   }
 
   _ddYear(y) => new DropdownMenuItem(value: y, child: new Text("$y"));
-  _getYears() => range(yearNow, yearNow + 4).map(_ddYear).toList();
+  _getYears() => _years.map(_ddYear).toList();
 
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(

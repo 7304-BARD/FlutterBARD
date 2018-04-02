@@ -157,6 +157,24 @@ Future<Iterable<Player>> dpgsGetTop50(String year) =>
               year: year);
         }));
 
+Future<Iterable<int>> dpgsGetTop50Years()
+{
+  int currentYear = new DateTime.now().year;
+  return dpgsGetTop50Raw("$currentYear").then((document) {
+    final id = "ctl00_ContentPlaceHolder1_RadComboBox1_DropDown";
+    final rootNode = document.getElementById(id);
+    final listItems = rootNode.querySelectorAll("li");
+    List<int> years = [];
+    listItems.forEach((item) {
+      final classOf = item.text;
+      final match = new RegExp(r"Class of ([\d]+)").firstMatch(classOf);
+      int year = int.parse(match.group(1));
+      years.add(year);
+    });
+    return years;
+  });
+}
+
 Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
     dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
           var idname = dpgsGetIdName(r.children[0].children[0]);
