@@ -7,6 +7,7 @@ import 'Search.dart';
 import 'TapNav.dart';
 
 class Watchlist extends StatefulWidget {
+  const Watchlist();
   State<StatefulWidget> createState() => new WatchlistState();
 }
 
@@ -26,10 +27,10 @@ class WatchlistState extends State<Watchlist> {
   }
 
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("My Watchlist")),
+      appBar: new AppBar(title: const Text("My Watchlist")),
       floatingActionButton: new FloatingActionButton(
-        child: new Icon(Icons.search),
-        onPressed: tapNav((BuildContext con) => new PlayerSearchWidget(), con,
+        child: const Icon(Icons.search),
+        onPressed: tapNav((BuildContext con) => const PlayerSearchWidget(), con,
             () => refreshPlayers()),
       ),
       body: new ListView(

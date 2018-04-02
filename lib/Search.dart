@@ -5,6 +5,7 @@ import 'Player.dart';
 import 'PlayerListElementWidget.dart';
 
 class PlayerSearchWidget extends StatefulWidget {
+  const PlayerSearchWidget();
   State<StatefulWidget> createState() => new PlayerSearchWidgetState();
 }
 
@@ -15,9 +16,9 @@ class PlayerSearchWidgetState extends State<PlayerSearchWidget> {
       appBar: new AppBar(title: new Text("Player Search")),
       body: new Column(children: [
         new Padding(
-            padding: new EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: new TextField(
-                decoration: new InputDecoration(icon: new Icon(Icons.search)),
+                decoration: const InputDecoration(icon: const Icon(Icons.search)),
                 onSubmitted: (q) {
                   dpgsSearchPlayers(q).then((p) => setState(() {
                         players = new List.unmodifiable(p);

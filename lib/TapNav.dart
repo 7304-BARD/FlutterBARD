@@ -13,7 +13,7 @@ class TapNav<T> extends StatelessWidget {
   final WidgetBuilder builder;
   final Function onDismissed;
   final Widget child;
-  TapNav({@required this.builder, this.onDismissed, @required this.child});
+  const TapNav({@required this.builder, this.onDismissed, @required this.child});
 
   Widget build(BuildContext con) => new GestureDetector(
       onTap: tapNav(builder, con, onDismissed), child: child);

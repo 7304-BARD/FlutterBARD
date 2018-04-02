@@ -6,7 +6,7 @@ class TournamentListElementWidget extends StatefulWidget {
   final Tournament tournament;
   final Function onTap;
 
-  TournamentListElementWidget(this.tournament, this.onTap);
+  const TournamentListElementWidget(this.tournament, this.onTap);
   State<StatefulWidget> createState() => new TournamentListElementWidgetState();
 }
 
@@ -19,19 +19,19 @@ class TournamentListElementWidgetState
           children: [
             new Expanded(
               child: new Padding(
-                padding: new EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: new Text(widget.tournament.title,
-                    style: new TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
             new Padding(
-              padding: new EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: new Text(widget.tournament.date),
             ),
           ],
         ),
         new Padding(
             child: new Text(widget.tournament.location),
-            padding: new EdgeInsets.only(right: 8.0)),
+            padding: const EdgeInsets.only(right: 8.0)),
       ]));
 }

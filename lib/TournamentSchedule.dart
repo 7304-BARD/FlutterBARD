@@ -6,7 +6,7 @@ class TournamentSchedule {
   final List<List<Player>> rosters;
   final List<List<DateTime>> playtimes;
 
-  TournamentSchedule(this.teams, this.rosters, this.playtimes);
+  const TournamentSchedule(this.teams, this.rosters, this.playtimes);
 
   Iterable<DateTime> playtimesForPlayer(Player p) sync* {
     for (var i = 0; i < rosters.length; i++)

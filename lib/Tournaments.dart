@@ -10,7 +10,7 @@ import 'Tournament.dart';
 
 class Tournaments extends StatefulWidget {
   State<StatefulWidget> createState() => new TournamentsState();
-  Tournaments();
+  const Tournaments();
 }
 
 class TournamentsState extends State<Tournaments> {
@@ -26,7 +26,7 @@ class TournamentsState extends State<Tournaments> {
   }
 
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("Tournaments")),
+      appBar: new AppBar(title: const Text("Tournaments")),
       body: new ListView(
           children: new List.unmodifiable(tournaments.map((t) =>
               new TournamentListElementWidget(
@@ -38,7 +38,7 @@ class TournamentsState extends State<Tournaments> {
 class TeamListElement extends StatelessWidget {
   final Team team;
   final Tournament tournament;
-  TeamListElement(this.team, this.tournament);
+  const TeamListElement(this.team, this.tournament);
 
   build(BuildContext con) => new TapNav(
       child: new Padding(
@@ -50,7 +50,7 @@ class TeamListElement extends StatelessWidget {
 
 class TournamentTeamListing extends StatefulWidget {
   final Tournament tournament;
-  TournamentTeamListing(this.tournament);
+  const TournamentTeamListing(this.tournament);
 
   createState() => new TournamentTeamListingState();
 }
@@ -75,7 +75,7 @@ class TournamentTeamListingState extends State<TournamentTeamListing> {
 class TeamRosterListing extends StatefulWidget {
   final Team team;
   final Tournament tournament;
-  TeamRosterListing(this.team, this.tournament);
+  const TeamRosterListing(this.team, this.tournament);
 
   createState() => new TeamRosterListingState();
 }
@@ -102,7 +102,7 @@ class TeamRosterListingState extends State<TeamRosterListing> {
       body: new ListView(
           children: []
             ..addAll(playtimes.map((p) => new Padding(
-                padding: new EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: new Text(p.toIso8601String()))))
             ..addAll(players.map((p) => new PlayerListElementWidget(p)))));
 }

@@ -7,7 +7,7 @@ class Tournament {
   final String id;
   final bool isGroup;
 
-  Tournament(
+  const Tournament(
       {@required this.id,
       @required this.title,
       @required this.date,

@@ -4,7 +4,7 @@ import 'package:range/range.dart';
 
 class CalendarUI extends StatefulWidget {
   final DateTime month;
-  CalendarUI(this.month);
+  const CalendarUI(this.month);
 
   createState() => new CalendarUIState(month);
 }
@@ -27,7 +27,7 @@ class DaySquare extends StatelessWidget {
 class WeekRow extends StatelessWidget {
   final int offset;
   final int end;
-  WeekRow(this.offset, this.end);
+  const WeekRow(this.offset, this.end);
 
   build(BuildContext con) => new Expanded(
       child: new Row(
@@ -37,8 +37,10 @@ class WeekRow extends StatelessWidget {
 }
 
 class WeekdayRow extends StatelessWidget {
+  const WeekdayRow();
+
   build(BuildContext con) => new Row(
-      children: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      children: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
           .map((l) => new Expanded(
               child: new Center(
                   child: new Text(l,
@@ -49,10 +51,10 @@ class WeekdayRow extends StatelessWidget {
 class MonthGrid extends StatelessWidget {
   final int offset;
   final int end;
-  MonthGrid(this.offset, this.end);
+  const MonthGrid(this.offset, this.end);
 
   build(BuildContext con) => new Column(
-      children: [new WeekdayRow()]..addAll(
+      children: [const WeekdayRow()]..addAll(
           range(1 - offset, 1 - offset + 5 * 7, 7)
               .map((i) => new WeekRow(i, end)) as List<WeekRow>));
 }
@@ -75,7 +77,7 @@ const months = const [
 String _formatMonth(DateTime m) => "${months[m.month - 1]} ${m.year}";
 
 int _monthLen(DateTime m) =>
-    [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m.month - 1];
+    const [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m.month - 1];
 
 int _monthStartDay(DateTime m) => new DateTime(m.year, m.month).weekday % 7;
 
