@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:range/range.dart';
@@ -11,23 +13,30 @@ class Top50 extends StatefulWidget {
 }
 
 class Top50State extends State<Top50> {
-  final int yearNow = new DateTime.now().year;
+  static final int yearNow = new DateTime.now().year;
   int year = new DateTime.now().year;
-  List<int> _years = [];
+  List<int> _years = range(yearNow, yearNow + 4).toList();
   List<Player> players = [];
 
-  refresh() async {
+  makeYears() async {
     final years = await dpgsGetTop50Years();
+
+    setState(() {
+      _years = years.toList();
+    });
+  }
+
+  refresh() async {
     final p = await dpgsGetTop50("$year");
 
     setState(() {
       players = p.toList();
-      _years = years.toList();
     });
   }
 
   initState() {
     super.initState();
+    makeYears();
     refresh();
   }
 
