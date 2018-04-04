@@ -92,7 +92,7 @@ class PlayerCache {
 
   Future<Null> addToWatchlist(Player p) async {
     p.watchlist = true;
-    await (await getWatchlistEntryRef(p.pgid)).set(p.toWLEntry());
+    await (await getWatchlistEntryRef(p.pgid)).set(p.toWLEntry()[p.pgid]);
   }
 
   Future<Null> removeFromWatchlist(Player p) async {
