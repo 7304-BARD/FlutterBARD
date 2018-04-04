@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tuple/tuple.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
 import 'dpgs.dart';
 import 'Player.dart';
+import 'TournamentSchedule.dart';
 
 final _playerCacheSingleton = new PlayerCache._();
 
@@ -49,11 +49,15 @@ class PlayerCache {
     return players;
   }
 
-  Future<DatabaseReference> getDBRef() async {
+  Future<DatabaseReference> getDBRootRef() async {
     final fbase = FirebaseDatabase.instance;
     await fbase.setPersistenceEnabled(true);
+    return fbase.reference();
+  }
+
+  Future<DatabaseReference> getDBRef() async {
     final uid = (await FirebaseAuth.instance.currentUser()).uid;
-    return fbase.reference().child('users/$uid');
+    return (await getDBRootRef()).child('users/$uid');
   }
 
   Future<DatabaseReference> getWatchlistDBRef() async =>
@@ -61,6 +65,9 @@ class PlayerCache {
 
   Future<DatabaseReference> getNotesDBRef() async =>
       (await getDBRef()).child('player_notes');
+
+  Future<DatabaseReference> getTScheduleDBRef() async =>
+      (await getDBRootRef()).child('tsched');
 
   Future<Null> pushPlayerNote(Player p, String note) async =>
       (await getNotesDBRef()).child('${p.pgid}').push().set(note);
@@ -71,17 +78,14 @@ class PlayerCache {
     return notes.toList();
   }
 
-  Future<List<Tuple2<String, Map<String, dynamic>>>>
-      getWatchlistEntries() async {
+  Future<List<Map<String, Map<String, dynamic>>>> getWatchlistEntries() async {
     final dbref = await getWatchlistDBRef();
     final entries = (await dbref.once()).value ?? {};
-    return entries.keys.map((k) => new Tuple2(k, entries[k])).toList();
+    return entries.keys.map((k) => {k: entries[k]}).toList();
   }
 
   Future<List<Player>> getWatchlistPlayers() async =>
-      (await getWatchlistEntries())
-          .map((m) => new Player.fromWLEntry(m))
-          .toList();
+      (await getWatchlistEntries()).map(Player.fromWLEntry).toList();
 
   Future<DatabaseReference> getWatchlistEntryRef(String pgid) async =>
       (await getWatchlistDBRef()).child(pgid);
@@ -101,4 +105,14 @@ class PlayerCache {
 
   Future<Null> toggleWatchlist(Player p) async =>
       await p.isWatched() ? removeFromWatchlist(p) : addToWatchlist(p);
+
+  Future<Null> putTournamentSchedules(Iterable<TournamentSchedule> ts) async {
+    final dbref = await getTScheduleDBRef();
+    await dbref.set(ts.map((t) => t.toMap()).toList());
+  }
+
+  Future<Iterable<TournamentSchedule>> getTournamentSchedules() async {
+    final dbref = await getTScheduleDBRef();
+    return (await dbref.once()).value.map(TournamentSchedule.fromMap);
+  }
 }

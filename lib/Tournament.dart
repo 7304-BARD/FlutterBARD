@@ -13,4 +13,19 @@ class Tournament {
       @required this.date,
       @required this.location,
       @required this.isGroup});
+
+  Map<String, dynamic> toMap() => {
+        'title': title,
+        'date': date,
+        'location': location,
+        'id': id,
+        'isGroup': isGroup ? 1 : 0
+      };
+
+  Tournament.fromMap(Map<String, dynamic> m)
+      : id = m['id'],
+        title = m['title'],
+        location = m['location'],
+        date = m['date'],
+        isGroup = m['isGroup'] > 0;
 }

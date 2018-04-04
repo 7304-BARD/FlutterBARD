@@ -18,7 +18,8 @@ class PlayerSearchWidgetState extends State<PlayerSearchWidget> {
         new Padding(
             padding: const EdgeInsets.all(20.0),
             child: new TextField(
-                decoration: const InputDecoration(icon: const Icon(Icons.search)),
+                decoration:
+                    const InputDecoration(icon: const Icon(Icons.search)),
                 onSubmitted: (q) {
                   dpgsSearchPlayers(q).then((p) => setState(() {
                         players = new List.unmodifiable(p);

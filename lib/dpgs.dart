@@ -8,15 +8,20 @@ import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
 
 import 'Player.dart';
+import 'PlayerCache.dart';
 import 'Team.dart';
 import 'Tournament.dart';
 import 'TournamentSchedule.dart';
 
 Future<Document> getResource(Uri uri) async {
-  var request = await new HttpClient().getUrl(uri);
-  var response = await request.close();
-  var body = await response.transform(UTF8.decoder).join();
-  return parse(body);
+  try {
+    final request = await new HttpClient().getUrl(uri);
+    final response = await request.close();
+    final body = await response.transform(UTF8.decoder).join();
+    return parse(body);
+  } catch (e) {
+    return getResource(uri);
+  }
 }
 
 Future<Document> dpgsGetRaw(String res, [Map<String, String> params]) =>
@@ -131,10 +136,7 @@ Future<Iterable<String>> dpgsGetEventsForEventGroup(String gid) async =>
 
 Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
   final teams = (await dpgsGetTournamentTeams(t)).toList();
-
-  final tpages = <Document>[];
-  for (var f in teams.map(dpgsGetTournamentTeamPage)) tpages.add(await f);
-
+  final tpages = await Future.wait(teams.map(dpgsGetTournamentTeamPage));
   final rosters =
       tpages.map(dpgsGetTournamentTeamRoster).map((r) => r.toList()).toList();
   final playtimes = tpages
@@ -142,8 +144,15 @@ Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
       .map((p) => p.toList())
       .toList();
 
-  return new TournamentSchedule(teams, rosters, playtimes);
+  return new TournamentSchedule(
+      tournament: t, teams: teams, rosters: rosters, playtimes: playtimes);
 }
+
+Future<List<TournamentSchedule>> dpgsGetTournamentSchedules() async => Future
+    .wait((await dpgsGetTournamentsData()).map(dpgsGetScheduleForTournament));
+
+Future<Null> dpgsUpdateTournamentSchedules() async => new PlayerCache()
+    .putTournamentSchedules(await dpgsGetTournamentSchedules());
 
 Tuple2<String, String> dpgsGetIdName(Element e) => new Tuple2(getID(e), e.text);
 
@@ -157,8 +166,7 @@ Future<Iterable<Player>> dpgsGetTop50(String year) =>
               year: year);
         }));
 
-Future<Iterable<int>> dpgsGetTop50Years()
-{
+Future<Iterable<int>> dpgsGetTop50Years() {
   int currentYear = new DateTime.now().year;
   return dpgsGetTop50Raw("$currentYear").then((document) {
     final id = "ctl00_ContentPlaceHolder1_RadComboBox1_DropDown";

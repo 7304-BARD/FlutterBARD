@@ -62,15 +62,18 @@ class Player {
     populated = false;
   }
 
-  Player.fromWLEntry(Tuple2<String, Map<String, dynamic>> wle) {
-    populated = false;
-    pgid = wle.item1;
-    name = wle.item2['name'];
-    year = wle.item2['year'];
-    pos = wle.item2['pos'];
+  static fromWLEntry(Map<String, Map<String, dynamic>> wle) {
+    final pgid = wle.keys.first;
+    return new Player.unpopulated(
+        pgid: pgid,
+        name: wle[pgid]['name'],
+        pos: wle[pgid]['pos'],
+        year: wle[pgid]['year']);
   }
 
-  toWLEntry() => {'name': name, 'year': year, 'pos': pos};
+  Map<String, Map<String, dynamic>> toWLEntry() => {
+        pgid: {'name': name, 'year': year, 'pos': pos}
+      };
 
   populateFromMap(Map<String, dynamic> kv) {
     pgid = kv['pgid'];
