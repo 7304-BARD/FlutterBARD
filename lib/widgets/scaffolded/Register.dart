@@ -1,21 +1,10 @@
-import 'package:FlutterBARD/widgets/scaffolded/HomePage.dart';
+import 'package:FlutterBARD/widgets/HPButton.dart';
+import 'package:FlutterBARD/widgets/TF.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
   createState() => new RegisterState();
-}
-
-class TF extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final bool password;
-
-  TF(this.label, this.controller, {this.password = false});
-  build(BuildContext con) => new TextField(
-      decoration: new InputDecoration(labelText: label),
-      controller: controller,
-      obscureText: password);
 }
 
 class RegisterState extends State<Register> {

@@ -1,4 +1,5 @@
-import 'package:FlutterBARD/widgets/scaffolded/HomePage.dart';
+import 'package:FlutterBARD/widgets/HPButton.dart';
+import 'package:FlutterBARD/widgets/TF.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
