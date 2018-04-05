@@ -15,8 +15,8 @@ class Player {
   String age;
   String height;
   String weight;
-  String bt;
-  String hs;
+  String bats_throws;
+  String highschool;
   String town;
   String teamSummer;
   String teamFall;
@@ -42,8 +42,9 @@ class Player {
     age = html.querySelector("#ContentPlaceHolder1_Bio1_lblAgeNow").text;
     height = html.querySelector("#ContentPlaceHolder1_Bio1_lblHeight").text;
     weight = html.querySelector("#ContentPlaceHolder1_Bio1_lblWeight").text;
-    bt = html.querySelector("#ContentPlaceHolder1_Bio1_lblBatsThrows").text;
-    hs = html.querySelector("#ContentPlaceHolder1_Bio1_lblHS").text;
+    bats_throws =
+        html.querySelector("#ContentPlaceHolder1_Bio1_lblBatsThrows").text;
+    highschool = html.querySelector("#ContentPlaceHolder1_Bio1_lblHS").text;
     town = html.querySelector("#ContentPlaceHolder1_Bio1_lblHomeTown").text;
     teamSummer =
         html.querySelector("#ContentPlaceHolder1_Bio1_lblSummerTeam").text;
@@ -84,8 +85,8 @@ class Player {
     age = kv['age'];
     height = kv['height'];
     weight = kv['weight'];
-    bt = kv['bt'];
-    hs = kv['hs'];
+    bats_throws = kv['bt'];
+    highschool = kv['hs'];
     town = kv['town'];
     teamSummer = kv['teamSummer'];
     teamFall = kv['teamFall'];
@@ -106,8 +107,8 @@ class Player {
         "age": age,
         "height": height,
         "weight": weight,
-        "bt": bt,
-        "hs": hs,
+        "bt": bats_throws,
+        "hs": highschool,
         "town": town,
         "teamSummer": teamSummer,
         "teamFall": teamFall,
@@ -129,8 +130,8 @@ class Player {
     addIfNonNull(details, "Age", age);
     addIfNonNull(details, "Height", height);
     addIfNonNull(details, "Weight", weight);
-    addIfNonNull(details, "Bats/Throws", bt);
-    addIfNonNull(details, "High school", hs);
+    addIfNonNull(details, "Bats/Throws", bats_throws);
+    addIfNonNull(details, "High school", highschool);
     addIfNonNull(details, "Hometown", town);
     addIfNonNull(details, "Summer team", teamSummer);
     addIfNonNull(details, "Fall team", teamFall);
