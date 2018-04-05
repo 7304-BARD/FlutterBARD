@@ -13,35 +13,35 @@ import 'Team.dart';
 import 'Tournament.dart';
 import 'TournamentSchedule.dart';
 
-Future<Document> getResource(Uri uri) async {
+Future<Document> _getResource(Uri uri) async {
   try {
     final request = await new HttpClient().getUrl(uri);
     final response = await request.close();
     final body = await response.transform(UTF8.decoder).join();
     return parse(body);
   } catch (e) {
-    return getResource(uri);
+    return _getResource(uri);
   }
 }
 
 Future<Document> dpgsGetRaw(String res, [Map<String, String> params]) =>
-    getResource(new Uri.https('www.perfectgame.org', res, params));
+    _getResource(new Uri.https('www.perfectgame.org', res, params));
 
-Iterable<E> stride<E>(Iterable<E> it, int stride) sync* {
+Iterable<E> _stride<E>(Iterable<E> it, int stride) sync* {
   while (it.isNotEmpty) {
     yield it.first;
     it = it.skip(stride);
   }
 }
 
-Element domUp(Element e, int levels) {
+Element _domUp(Element e, int levels) {
   range(levels).forEach((_) {
     e = e.parent;
   });
   return e;
 }
 
-Element ancestorByTag(Element e, String tag) {
+Element _ancestorByTag(Element e, String tag) {
   while (e.localName != tag) e = e.parent;
   return e;
 }
@@ -62,10 +62,10 @@ Iterable<Element> dpgsGetPlayerKeyedTableAnchors(Document d) =>
     d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
 
 Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d) =>
-    dpgsGetPlayerKeyedTableAnchors(d).map((e) => ancestorByTag(e, 'tr'));
+    dpgsGetPlayerKeyedTableAnchors(d).map((e) => _ancestorByTag(e, 'tr'));
 
 Iterable<Element> dpgsGetEventBoxes(Document d) =>
-    stride(d.querySelectorAll("div.EventBox"), 2);
+    _stride(d.querySelectorAll("div.EventBox"), 2);
 
 Future<Document> dpgsGetTop50Raw(String year) =>
     dpgsGetRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
@@ -79,9 +79,9 @@ Future<Document> dpgsGetTournamentTeamPage(Team t) =>
 
 Iterable<Player> dpgsGetTournamentTeamRoster(Document doc) =>
     doc.querySelectorAll('tr a[id*="Roster"]').map((r) {
-      final Element row = ancestorByTag(r, 'tr');
+      final Element row = _ancestorByTag(r, 'tr');
       return new Player.unpopulated(
-          pgid: getID(r),
+          pgid: _getID(r),
           name: r.text,
           pos: row.querySelector('*[id*="Position"]').text,
           year: new RegExp(r'20\d\d').stringMatch(row.text));
@@ -108,7 +108,7 @@ Iterable<DateTime> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
 Iterable<Element> dpgsGetTournamentTeamAnchors(Document d) =>
     d.querySelectorAll('a[href*="Tournaments/Teams/Default.aspx"]');
 
-String getID(Element anchor) {
+String _getID(Element anchor) {
   final href = anchor.attributes['href'];
   return href.substring(href.lastIndexOf('=') + 1);
 }
@@ -116,10 +116,10 @@ String getID(Element anchor) {
 Future<Iterable<String>> _expandEventIds(Tournament t) async =>
     t.isGroup ? await dpgsGetEventsForEventGroup(t.id) : [t.id];
 
-Future<Iterable<Team>> dpgsGetEventTeams(String eventid) async => dpgsGetRaw(
-        'Events/TournamentTeams.aspx', {'event': eventid})
-    .then(dpgsGetTournamentTeamAnchors)
-    .then((e) => e.map(dpgsGetIdName).map((t) => new Team(t.item1, t.item2)));
+Future<Iterable<Team>> dpgsGetEventTeams(String eventid) async =>
+    dpgsGetRaw('Events/TournamentTeams.aspx', {'event': eventid})
+        .then(dpgsGetTournamentTeamAnchors)
+        .then((e) => e.map(_getIdName).map((t) => new Team(t.item1, t.item2)));
 
 Future<Iterable<Team>> dpgsGetTournamentTeams(Tournament t) async {
   final teams = <Team>[];
@@ -131,8 +131,8 @@ Future<Iterable<Team>> dpgsGetTournamentTeams(Tournament t) async {
 Future<Iterable<String>> dpgsGetEventsForEventGroup(String gid) async =>
     (await dpgsGetRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))
         .querySelectorAll('strong')
-        .map((e) => ancestorByTag(e, 'a'))
-        .map(getID);
+        .map((e) => _ancestorByTag(e, 'a'))
+        .map(_getID);
 
 Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
   final teams = (await dpgsGetTournamentTeams(t)).toList();
@@ -154,11 +154,11 @@ Future<List<TournamentSchedule>> dpgsGetTournamentSchedules() async => Future
 Future<Null> dpgsUpdateTournamentSchedules() async => new PlayerCache()
     .putTournamentSchedules(await dpgsGetTournamentSchedules());
 
-Tuple2<String, String> dpgsGetIdName(Element e) => new Tuple2(getID(e), e.text);
+Tuple2<String, String> _getIdName(Element e) => new Tuple2(_getID(e), e.text);
 
 Future<Iterable<Player>> dpgsGetTop50(String year) =>
     dpgsGetTop50Raw(year).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
-          var idname = dpgsGetIdName(r.querySelector('a'));
+          var idname = _getIdName(r.querySelector('a'));
           return new Player.unpopulated(
               pgid: idname.item1,
               name: idname.item2,
@@ -185,7 +185,7 @@ Future<Iterable<int>> dpgsGetTop50Years() {
 
 Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
     dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
-          var idname = dpgsGetIdName(r.children[0].children[0]);
+          var idname = _getIdName(r.children[0].children[0]);
           return new Player.unpopulated(
               pgid: idname.item1,
               name: idname.item2,
@@ -195,9 +195,9 @@ Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
 
 Tournament dpgsGetEventData(Element ebox) {
   final titleLocElem = ebox.querySelector("center");
-  final anchor = ancestorByTag(ebox, 'a');
+  final anchor = _ancestorByTag(ebox, 'a');
   return new Tournament(
-      id: getID(anchor),
+      id: _getID(anchor),
       title: titleLocElem.querySelector("strong").text,
       location: titleLocElem.nodes[2].text,
       isGroup: anchor.attributes['href'].contains('Grouped'),
