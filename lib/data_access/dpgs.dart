@@ -16,7 +16,7 @@ Future<Document> _getResource(Uri uri) async {
   try {
     final request = await new HttpClient().getUrl(uri);
     final response = await request.close();
-    final body = await response.transform(UTF8.decoder).join();
+    final body = await response.transform(const Utf8Codec().decoder).join();
     return parse(body);
   } catch (e) {
     return _getResource(uri);
