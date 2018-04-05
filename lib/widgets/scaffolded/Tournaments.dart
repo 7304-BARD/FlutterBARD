@@ -17,7 +17,7 @@ class TournamentsState extends State<Tournaments> {
 
   initState() {
     super.initState();
-    dpgsGetTournamentsData().then((t) {
+    dpgsFetchTournamentsData().then((t) {
       setState(() {
         tournaments = new List.unmodifiable(t);
       });
@@ -58,7 +58,7 @@ class TournamentTeamListingState extends State<TournamentTeamListing> {
   List<Team> teams = [];
   initState() {
     super.initState();
-    dpgsGetTournamentTeams(widget.tournament).then((l) {
+    dpgsFetchTournamentTeams(widget.tournament).then((l) {
       setState(() => teams = l);
     });
   }
@@ -84,7 +84,7 @@ class TeamRosterListingState extends State<TeamRosterListing> {
   List<DateTime> playtimes = [];
 
   void fetchDoc() async {
-    final doc = await dpgsGetTournamentTeamPage(widget.team);
+    final doc = await dpgsFetchTournamentTeamPage(widget.team);
     playtimes = dpgsGetTournamentTeamPlaytimes(doc).toList();
     setState(() {
       players = dpgsGetTournamentTeamRoster(doc).toList();

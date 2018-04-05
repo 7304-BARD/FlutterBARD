@@ -9,22 +9,21 @@ import 'package:FlutterBARD/values/Tournament.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
 
-Future<Document> _getResource(Uri uri) async {
+Future<Document> _fetchResource(Uri uri) async {
   try {
     final request = await new HttpClient().getUrl(uri);
     final response = await request.close();
     final body = await response.transform(const Utf8Codec().decoder).join();
     return parse(body);
   } catch (e) {
-    return _getResource(uri);
+    return _fetchResource(uri);
   }
 }
 
-Future<Document> dpgsGetRaw(String res, [Map<String, String> params]) =>
-    _getResource(new Uri.https('www.perfectgame.org', res, params));
+Future<Document> _fetchPGRaw(String res, [Map<String, String> params]) =>
+    _fetchResource(new Uri.https('www.perfectgame.org', res, params));
 
 Iterable<E> _stride<E>(Iterable<E> it, int stride) sync* {
   while (it.isNotEmpty) {
@@ -33,48 +32,40 @@ Iterable<E> _stride<E>(Iterable<E> it, int stride) sync* {
   }
 }
 
-Element _domUp(Element e, int levels) {
-  range(levels).forEach((_) {
-    e = e.parent;
-  });
-  return e;
-}
-
 Element _ancestorByTag(Element e, String tag) {
   while (e.localName != tag) e = e.parent;
   return e;
 }
 
-Future<Document> dpgsGetPlayerRaw(String id) =>
-    dpgsGetRaw('Players/Playerprofile.aspx', {"id": id});
+Future<Document> _fetchPlayerPage(String id) =>
+    _fetchPGRaw('Players/Playerprofile.aspx', {"id": id});
 
-Future<Player> dpgsGetPlayer(String id) =>
-    dpgsGetPlayerRaw(id).then((d) => new Player(id, d));
+Future<Player> dpgsFetchPlayer(String id) async =>
+    new Player(id, await _fetchPlayerPage(id));
 
-Future<Document> dpgsGetSearch(String q) =>
-    dpgsGetRaw('Search.aspx', {'search': q});
+Future<Document> _performSearch(String q) =>
+    _fetchPGRaw('Search.aspx', {'search': q});
 
-Future<Document> dpgsGetTournaments() =>
-    dpgsGetRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
+Future<Document> _fetchTournamentsPage() =>
+    _fetchPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
 
-Iterable<Element> dpgsGetPlayerKeyedTableAnchors(Document d) =>
+Iterable<Element> _getPlayerKeyedTableAnchors(Document d) =>
     d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
 
-Iterable<Element> dpgsGetPlayerKeyedTableRows(Document d) =>
-    dpgsGetPlayerKeyedTableAnchors(d).map((e) => _ancestorByTag(e, 'tr'));
+Iterable<Element> _getPlayerKeyedTableRows(Document d) =>
+    _getPlayerKeyedTableAnchors(d).map((e) => _ancestorByTag(e, 'tr'));
 
-Iterable<Element> dpgsGetEventBoxes(Document d) =>
+Iterable<Element> _getEventBoxes(Document d) =>
     _stride(d.querySelectorAll("div.EventBox"), 2);
 
-Future<Document> dpgsGetTop50Raw(String year) =>
-    dpgsGetRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
+Future<Document> _fetchT50Page(String year) =>
+    _fetchPGRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
 
-Future<Iterable<Tournament>> dpgsGetTournamentsData() => dpgsGetTournaments()
-    .then(dpgsGetEventBoxes)
-    .then((e) => e.map(dpgsGetEventData));
+Future<Iterable<Tournament>> dpgsFetchTournamentsData() async =>
+    _getEventBoxes(await _fetchTournamentsPage()).map(_getEventData);
 
-Future<Document> dpgsGetTournamentTeamPage(Team t) =>
-    dpgsGetRaw('Events/Tournaments/Teams/Default.aspx', {'team': t.id});
+Future<Document> dpgsFetchTournamentTeamPage(Team t) =>
+    _fetchPGRaw('Events/Tournaments/Teams/Default.aspx', {'team': t.id});
 
 Iterable<Player> dpgsGetTournamentTeamRoster(Document doc) =>
     doc.querySelectorAll('tr a[id*="Roster"]').map((r) {
@@ -104,7 +95,7 @@ Iterable<DateTime> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
     .map((e) => e.querySelector('div.col-lg-3').children[1].text)
     .map(_parsePGDateTime);
 
-Iterable<Element> dpgsGetTournamentTeamAnchors(Document d) =>
+Iterable<Element> _getTournamentTeamAnchors(Document d) =>
     d.querySelectorAll('a[href*="Tournaments/Teams/Default.aspx"]');
 
 String _getID(Element anchor) {
@@ -113,29 +104,27 @@ String _getID(Element anchor) {
 }
 
 Future<Iterable<String>> _expandEventIds(Tournament t) async =>
-    t.isGroup ? await dpgsGetEventsForEventGroup(t.id) : [t.id];
+    t.isGroup ? await _fetchEventsForEventGroup(t.id) : [t.id];
 
-Future<Iterable<Team>> dpgsGetEventTeams(String eventid) async =>
-    dpgsGetRaw('Events/TournamentTeams.aspx', {'event': eventid})
-        .then(dpgsGetTournamentTeamAnchors)
-        .then((e) => e.map(_getIdName).map((t) => new Team(t.item1, t.item2)));
+Future<Iterable<Team>> _fetchEventTeams(String eventid) async =>
+    _getTournamentTeamAnchors(await _fetchPGRaw(
+            'Events/TournamentTeams.aspx', {'event': eventid}))
+        .map(_getIdName)
+        .map((t) => new Team(t.item1, t.item2));
 
-Future<Iterable<Team>> dpgsGetTournamentTeams(Tournament t) async {
-  final teams = <Team>[];
-  for (final e in await _expandEventIds(t))
-    teams.addAll(await dpgsGetEventTeams(e));
-  return teams;
-}
+Future<List<Team>> dpgsFetchTournamentTeams(Tournament t) async =>
+    (await Future.wait((await _expandEventIds(t)).map(_fetchEventTeams)))
+        .expand((l) => l);
 
-Future<Iterable<String>> dpgsGetEventsForEventGroup(String gid) async =>
-    (await dpgsGetRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))
+Future<Iterable<String>> _fetchEventsForEventGroup(String gid) async =>
+    (await _fetchPGRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))
         .querySelectorAll('strong')
         .map((e) => _ancestorByTag(e, 'a'))
         .map(_getID);
 
-Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
-  final teams = (await dpgsGetTournamentTeams(t)).toList();
-  final tpages = await Future.wait(teams.map(dpgsGetTournamentTeamPage));
+Future<TournamentSchedule> dpgsFetchScheduleForTournament(Tournament t) async {
+  final teams = (await dpgsFetchTournamentTeams(t)).toList();
+  final tpages = await Future.wait(teams.map(dpgsFetchTournamentTeamPage));
   final rosters =
       tpages.map(dpgsGetTournamentTeamRoster).map((r) => r.toList()).toList();
   final playtimes = tpages
@@ -147,52 +136,43 @@ Future<TournamentSchedule> dpgsGetScheduleForTournament(Tournament t) async {
       tournament: t, teams: teams, rosters: rosters, playtimes: playtimes);
 }
 
-Future<List<TournamentSchedule>> dpgsGetTournamentSchedules() async => Future
-    .wait((await dpgsGetTournamentsData()).map(dpgsGetScheduleForTournament));
+Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules() async =>
+    Future.wait(
+        (await dpgsFetchTournamentsData()).map(dpgsFetchScheduleForTournament));
 
 Future<Null> dpgsUpdateTournamentSchedules() async => new PlayerCache()
-    .putTournamentSchedules(await dpgsGetTournamentSchedules());
+    .putTournamentSchedules(await dpgsFetchTournamentSchedules());
 
 Tuple2<String, String> _getIdName(Element e) => new Tuple2(_getID(e), e.text);
 
-Future<Iterable<Player>> dpgsGetTop50(String year) =>
-    dpgsGetTop50Raw(year).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
-          var idname = _getIdName(r.querySelector('a'));
-          return new Player.unpopulated(
-              pgid: idname.item1,
-              name: idname.item2,
-              pos: r.children[2].text,
-              year: year);
-        }));
-
-Future<Iterable<int>> dpgsGetTop50Years() {
-  int currentYear = new DateTime.now().year;
-  return dpgsGetTop50Raw("$currentYear").then((document) {
-    final id = "ctl00_ContentPlaceHolder1_RadComboBox1_DropDown";
-    final rootNode = document.getElementById(id);
-    final listItems = rootNode.querySelectorAll("li");
-    List<int> years = [];
-    listItems.forEach((item) {
-      final classOf = item.text;
-      final match = new RegExp(r"Class of ([\d]+)").firstMatch(classOf);
-      int year = int.parse(match.group(1));
-      years.add(year);
+Future<Iterable<Player>> dpgsFetchTop50Players(String year) async =>
+    _getPlayerKeyedTableRows(await _fetchT50Page(year)).map((r) {
+      var idname = _getIdName(r.querySelector('a'));
+      return new Player.unpopulated(
+          pgid: idname.item1,
+          name: idname.item2,
+          pos: r.children[2].text,
+          year: year);
     });
-    return years;
-  });
-}
 
-Future<Iterable<Player>> dpgsSearchPlayers(String q) =>
-    dpgsGetSearch(q).then((d) => dpgsGetPlayerKeyedTableRows(d).map((r) {
-          var idname = _getIdName(r.children[0].children[0]);
-          return new Player.unpopulated(
-              pgid: idname.item1,
-              name: idname.item2,
-              pos: r.children[1].text,
-              year: r.children[2].text);
-        }));
+Future<Iterable<int>> dpgsFetchTop50Years() async =>
+    (await _fetchT50Page("${new DateTime.now().year}"))
+        .getElementById("ctl00_ContentPlaceHolder1_RadComboBox1_DropDown")
+        .querySelectorAll("li")
+        .map((e) => new RegExp(r"Class of ([\d]+)").firstMatch(e.text)[1])
+        .map(int.parse);
 
-Tournament dpgsGetEventData(Element ebox) {
+Future<Iterable<Player>> dpgsSearchPlayers(String q) async =>
+    _getPlayerKeyedTableRows(await _performSearch(q)).map((r) {
+      var idname = _getIdName(r.children[0].children[0]);
+      return new Player.unpopulated(
+          pgid: idname.item1,
+          name: idname.item2,
+          pos: r.children[1].text,
+          year: r.children[2].text);
+    });
+
+Tournament _getEventData(Element ebox) {
   final titleLocElem = ebox.querySelector("center");
   final anchor = _ancestorByTag(ebox, 'a');
   return new Tournament(

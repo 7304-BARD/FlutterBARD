@@ -34,7 +34,7 @@ class PlayerCache {
   Future<Player> getPlayerForId(String id) async {
     final cpm = await db.get(id);
     if (cpm == null) {
-      final Player player = await dpgsGetPlayer(id);
+      final Player player = await dpgsFetchPlayer(id);
       await db.put(player.toMap(), player.pgid);
       return player;
     } else {

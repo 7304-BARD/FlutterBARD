@@ -15,7 +15,7 @@ class Top50State extends State<Top50> {
   List<Player> players = [];
 
   makeYears() async {
-    final years = await dpgsGetTop50Years();
+    final years = await dpgsFetchTop50Years();
 
     setState(() {
       _years = years.toList();
@@ -23,7 +23,7 @@ class Top50State extends State<Top50> {
   }
 
   refresh() async {
-    final p = await dpgsGetTop50("$year");
+    final p = await dpgsFetchTop50Players("$year");
 
     setState(() {
       players = p.toList();
