@@ -6,9 +6,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-import 'dpgs.dart';
-import 'Player.dart';
-import 'TournamentSchedule.dart';
+import 'package:FlutterBARD/dpgs.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/TournamentSchedule.dart';
 
 final _playerCacheSingleton = new PlayerCache._();
 

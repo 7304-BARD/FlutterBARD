@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'Player.dart';
-import 'PlayerCache.dart';
-import 'PlayerListElementWidget.dart';
-import 'Search.dart';
-import 'TapNav.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerCache.dart';
+import 'package:FlutterBARD/PlayerListElementWidget.dart';
+import 'package:FlutterBARD/Search.dart';
+import 'package:FlutterBARD/TapNav.dart';
 
 class Watchlist extends StatefulWidget {
   const Watchlist();

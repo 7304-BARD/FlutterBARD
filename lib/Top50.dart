@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:range/range.dart';
 
-import 'dpgs.dart';
-import 'Player.dart';
-import 'PlayerListElementWidget.dart';
+import 'package:FlutterBARD/dpgs.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerListElementWidget.dart';
 
 class Top50 extends StatefulWidget {
   State<StatefulWidget> createState() => new Top50State();

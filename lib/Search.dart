@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'dpgs.dart';
-import 'Player.dart';
-import 'PlayerListElementWidget.dart';
+import 'package:FlutterBARD/dpgs.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerListElementWidget.dart';
 
 class PlayerSearchWidget extends StatefulWidget {
   const PlayerSearchWidget();

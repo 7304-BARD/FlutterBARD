@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'Player.dart';
-import 'PlayerDetailWidget.dart';
-import 'TapNav.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerDetailWidget.dart';
+import 'package:FlutterBARD/TapNav.dart';
 
 void nop() {}
 

@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 
-import 'Player.dart';
-import 'Team.dart';
-import 'Tournament.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/Team.dart';
+import 'package:FlutterBARD/Tournament.dart';
 
 class TournamentSchedule {
   final Tournament tournament;

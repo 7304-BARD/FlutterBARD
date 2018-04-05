@@ -4,7 +4,7 @@ import 'package:html/dom.dart';
 import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
 
-import 'PlayerCache.dart';
+import 'package:FlutterBARD/PlayerCache.dart';
 
 class Player {
   String pgid;

@@ -7,11 +7,11 @@ import 'package:html/dom.dart';
 import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
 
-import 'Player.dart';
-import 'PlayerCache.dart';
-import 'Team.dart';
-import 'Tournament.dart';
-import 'TournamentSchedule.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerCache.dart';
+import 'package:FlutterBARD/Team.dart';
+import 'package:FlutterBARD/Tournament.dart';
+import 'package:FlutterBARD/TournamentSchedule.dart';
 
 Future<Document> _getResource(Uri uri) async {
   try {

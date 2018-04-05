@@ -4,8 +4,8 @@ import 'package:async_loader/async_loader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'HomePage.dart';
-import 'Login.dart';
+import 'package:FlutterBARD/HomePage.dart';
+import 'package:FlutterBARD/Login.dart';
 
 void main() {
   doFBaseMessagingSetup();

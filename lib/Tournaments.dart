@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'dpgs.dart';
-import 'Player.dart';
-import 'PlayerListElementWidget.dart';
-import 'TapNav.dart';
-import 'Team.dart';
-import 'TournamentListElementWidget.dart';
-import 'Tournament.dart';
+import 'package:FlutterBARD/dpgs.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerListElementWidget.dart';
+import 'package:FlutterBARD/TapNav.dart';
+import 'package:FlutterBARD/Team.dart';
+import 'package:FlutterBARD/TournamentListElementWidget.dart';
+import 'package:FlutterBARD/Tournament.dart';
 
 class Tournaments extends StatefulWidget {
   State<StatefulWidget> createState() => new TournamentsState();

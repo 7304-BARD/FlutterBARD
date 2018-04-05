@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'Player.dart';
-import 'PlayerCache.dart';
-import 'PlayerNoteEntry.dart';
-import 'TapNav.dart';
+import 'package:FlutterBARD/Player.dart';
+import 'package:FlutterBARD/PlayerCache.dart';
+import 'package:FlutterBARD/PlayerNoteEntry.dart';
+import 'package:FlutterBARD/TapNav.dart';
 
 class KVText extends StatelessWidget {
   final Tuple2<String, String> pair;
