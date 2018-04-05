@@ -2,16 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:html/parser.dart';
+import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/values/Team.dart';
+import 'package:FlutterBARD/values/Tournament.dart';
+import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:html/dom.dart';
+import 'package:html/parser.dart';
 import 'package:range/range.dart';
 import 'package:tuple/tuple.dart';
-
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerCache.dart';
-import 'package:FlutterBARD/Team.dart';
-import 'package:FlutterBARD/Tournament.dart';
-import 'package:FlutterBARD/TournamentSchedule.dart';
 
 Future<Document> _getResource(Uri uri) async {
   try {

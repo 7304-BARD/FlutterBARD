@@ -1,12 +1,11 @@
+import 'package:FlutterBARD/data_access/dpgs.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/values/Team.dart';
+import 'package:FlutterBARD/values/Tournament.dart';
+import 'package:FlutterBARD/widgets/PlayerListElement.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/TournamentListElement.dart';
 import 'package:flutter/material.dart';
-
-import 'package:FlutterBARD/dpgs.dart';
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerListElementWidget.dart';
-import 'package:FlutterBARD/TapNav.dart';
-import 'package:FlutterBARD/Team.dart';
-import 'package:FlutterBARD/TournamentListElementWidget.dart';
-import 'package:FlutterBARD/Tournament.dart';
 
 class Tournaments extends StatefulWidget {
   State<StatefulWidget> createState() => new TournamentsState();

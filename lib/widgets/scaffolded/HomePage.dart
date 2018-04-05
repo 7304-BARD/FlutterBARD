@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/scaffolded/CalendarUI.dart';
+import 'package:FlutterBARD/widgets/scaffolded/Top50.dart';
+import 'package:FlutterBARD/widgets/scaffolded/Tournaments.dart';
+import 'package:FlutterBARD/widgets/scaffolded/Watchlist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:FlutterBARD/dpgs.dart';
-import 'package:FlutterBARD/CalendarUI.dart';
-import 'package:FlutterBARD/TapNav.dart';
-import 'package:FlutterBARD/Top50.dart';
-import 'package:FlutterBARD/Tournaments.dart';
-import 'package:FlutterBARD/Watchlist.dart';
+import 'package:flutter/material.dart';
 
 class HPButton extends StatelessWidget {
   final String label;

@@ -1,8 +1,7 @@
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/scaffolded/PlayerDetail.dart';
 import 'package:flutter/material.dart';
-
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerDetailWidget.dart';
-import 'package:FlutterBARD/TapNav.dart';
 
 void nop() {}
 

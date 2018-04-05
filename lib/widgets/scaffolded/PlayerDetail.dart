@@ -1,12 +1,10 @@
+import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/scaffolded/PlayerNoteEntry.dart';
 import 'package:flutter/material.dart';
-
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerCache.dart';
-import 'package:FlutterBARD/PlayerNoteEntry.dart';
-import 'package:FlutterBARD/TapNav.dart';
 
 class KVText extends StatelessWidget {
   final Tuple2<String, String> pair;

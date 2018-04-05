@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-
+import 'package:FlutterBARD/widgets/scaffolded/HomePage.dart';
+import 'package:FlutterBARD/widgets/scaffolded/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:FlutterBARD/HomePage.dart';
-import 'package:FlutterBARD/Register.dart';
+import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
   createState() => new LoginState();

@@ -1,10 +1,9 @@
+import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/PlayerListElement.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/scaffolded/Search.dart';
 import 'package:flutter/material.dart';
-
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerCache.dart';
-import 'package:FlutterBARD/PlayerListElementWidget.dart';
-import 'package:FlutterBARD/Search.dart';
-import 'package:FlutterBARD/TapNav.dart';
 
 class Watchlist extends StatefulWidget {
   const Watchlist();

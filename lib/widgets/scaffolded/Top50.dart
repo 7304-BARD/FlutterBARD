@@ -1,12 +1,8 @@
-import 'dart:async';
-
+import 'package:FlutterBARD/data_access/dpgs.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:flutter/material.dart';
-
 import 'package:range/range.dart';
-
-import 'package:FlutterBARD/dpgs.dart';
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerListElementWidget.dart';
 
 class Top50 extends StatefulWidget {
   State<StatefulWidget> createState() => new Top50State();

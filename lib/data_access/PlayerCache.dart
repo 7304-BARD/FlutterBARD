@@ -1,14 +1,13 @@
 import 'dart:async';
 
+import 'package:FlutterBARD/data_access/dpgs.dart';
+import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
-
-import 'package:FlutterBARD/dpgs.dart';
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/TournamentSchedule.dart';
 
 final _playerCacheSingleton = new PlayerCache._();
 

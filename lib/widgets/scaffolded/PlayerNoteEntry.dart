@@ -1,7 +1,6 @@
+import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/values/Player.dart';
 import 'package:flutter/material.dart';
-
-import 'package:FlutterBARD/Player.dart';
-import 'package:FlutterBARD/PlayerCache.dart';
 
 class PlayerNoteEntry extends StatefulWidget {
   final Player player;

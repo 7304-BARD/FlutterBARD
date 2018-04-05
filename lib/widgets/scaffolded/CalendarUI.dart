@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:range/range.dart';
 
 class CalendarUI extends StatefulWidget {

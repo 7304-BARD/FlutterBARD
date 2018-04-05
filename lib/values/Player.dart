@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:FlutterBARD/data_access/PlayerCache.dart';
 import 'package:html/dom.dart';
 import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
-
-import 'package:FlutterBARD/PlayerCache.dart';
 
 class Player {
   String pgid;

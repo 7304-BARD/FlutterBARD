@@ -1,6 +1,5 @@
+import 'package:FlutterBARD/values/Tournament.dart';
 import 'package:flutter/material.dart';
-
-import 'package:FlutterBARD/Tournament.dart';
 
 class TournamentListElement extends StatefulWidget {
   final Tournament tournament;
