@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:FlutterBARD/Tournament.dart';
 
-class TournamentListElementWidget extends StatefulWidget {
+class TournamentListElement extends StatefulWidget {
   final Tournament tournament;
   final Function onTap;
 
-  const TournamentListElementWidget(this.tournament, this.onTap);
-  State<StatefulWidget> createState() => new TournamentListElementWidgetState();
+  const TournamentListElement(this.tournament, this.onTap);
+  State<StatefulWidget> createState() => new TournamentListElementState();
 }
 
-class TournamentListElementWidgetState
-    extends State<TournamentListElementWidget> {
+class TournamentListElementState extends State<TournamentListElement> {
   Widget build(BuildContext con) => new GestureDetector(
       onTap: widget.onTap,
       child: new Column(crossAxisAlignment: CrossAxisAlignment.end, children: [

@@ -59,5 +59,5 @@ class Top50State extends State<Top50> {
       ])),
       body: new ListView(
           children: new List.unmodifiable(
-              players.map((p) => new PlayerListElementWidget(p)))));
+              players.map((p) => new PlayerListElement(p)))));
 }

@@ -4,12 +4,12 @@ import 'package:FlutterBARD/dpgs.dart';
 import 'package:FlutterBARD/Player.dart';
 import 'package:FlutterBARD/PlayerListElementWidget.dart';
 
-class PlayerSearchWidget extends StatefulWidget {
-  const PlayerSearchWidget();
-  State<StatefulWidget> createState() => new PlayerSearchWidgetState();
+class Search extends StatefulWidget {
+  const Search();
+  State<StatefulWidget> createState() => new SearchState();
 }
 
-class PlayerSearchWidgetState extends State<PlayerSearchWidget> {
+class SearchState extends State<Search> {
   List<Player> players = [];
 
   Widget build(BuildContext con) => new Scaffold(
@@ -28,6 +28,6 @@ class PlayerSearchWidgetState extends State<PlayerSearchWidget> {
         new Expanded(
             child: new ListView(
                 children: new List.unmodifiable(
-                    players.map((p) => new PlayerListElementWidget(p)))))
+                    players.map((p) => new PlayerListElement(p)))))
       ]));
 }

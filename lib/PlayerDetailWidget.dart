@@ -20,18 +20,18 @@ class KVText extends StatelessWidget {
       ]));
 }
 
-class NoteWidget extends StatelessWidget {
+class Note extends StatelessWidget {
   final String note;
-  NoteWidget(this.note);
+  Note(this.note);
 
   Widget build(BuildContext con) => new Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: new Text(note));
 }
 
-class NotesWidget extends StatelessWidget {
+class Notes extends StatelessWidget {
   final List<String> notes;
-  NotesWidget(this.notes);
+  Notes(this.notes);
 
   Widget build(BuildContext con) => new Padding(
       padding: const EdgeInsets.all(12.0),
@@ -40,17 +40,17 @@ class NotesWidget extends StatelessWidget {
           children: [
             const Text("Notes:",
                 style: const TextStyle(fontWeight: FontWeight.bold))
-          ]..addAll(notes.map((n) => new NoteWidget(n)))));
+          ]..addAll(notes.map((n) => new Note(n)))));
 }
 
-class PlayerDetailWidget extends StatefulWidget {
+class PlayerDetail extends StatefulWidget {
   final Player player;
 
-  PlayerDetailWidget(this.player);
-  State<StatefulWidget> createState() => new PlayerDetailWidgetState();
+  PlayerDetail(this.player);
+  State<StatefulWidget> createState() => new PlayerDetailState();
 }
 
-class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
+class PlayerDetailState extends State<PlayerDetail> {
   PlayerCache pcache = new PlayerCache();
   List<String> notes = [];
 
@@ -109,5 +109,5 @@ class PlayerDetailWidgetState extends State<PlayerDetailWidget> {
                   ]
                     ..addAll(
                         widget.player.detailMap().map((p) => new KVText(p)))
-                    ..add(new NotesWidget(notes))))));
+                    ..add(new Notes(notes))))));
 }

@@ -29,7 +29,7 @@ class TournamentsState extends State<Tournaments> {
       appBar: new AppBar(title: const Text("Tournaments")),
       body: new ListView(
           children: new List.unmodifiable(tournaments.map((t) =>
-              new TournamentListElementWidget(
+              new TournamentListElement(
                   t,
                   tapNav((BuildContext con) => new TournamentTeamListing(t),
                       con))))));
@@ -104,5 +104,5 @@ class TeamRosterListingState extends State<TeamRosterListing> {
             ..addAll(playtimes.map((p) => new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new Text(p.toIso8601String()))))
-            ..addAll(players.map((p) => new PlayerListElementWidget(p)))));
+            ..addAll(players.map((p) => new PlayerListElement(p)))));
 }

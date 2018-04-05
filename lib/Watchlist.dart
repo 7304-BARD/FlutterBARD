@@ -30,10 +30,10 @@ class WatchlistState extends State<Watchlist> {
       appBar: new AppBar(title: const Text("My Watchlist")),
       floatingActionButton: new FloatingActionButton(
         child: const Icon(Icons.search),
-        onPressed: tapNav((BuildContext con) => const PlayerSearchWidget(), con,
-            () => refreshPlayers()),
+        onPressed: tapNav(
+            (BuildContext con) => const Search(), con, () => refreshPlayers()),
       ),
       body: new ListView(
-          children: new List.unmodifiable(players
-              .map((p) => new PlayerListElementWidget(p, refreshPlayers)))));
+          children: new List.unmodifiable(
+              players.map((p) => new PlayerListElement(p, refreshPlayers)))));
 }

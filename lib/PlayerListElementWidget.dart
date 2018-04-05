@@ -6,17 +6,17 @@ import 'package:FlutterBARD/TapNav.dart';
 
 void nop() {}
 
-class PlayerListElementWidget extends StatefulWidget {
+class PlayerListElement extends StatefulWidget {
   final Player player;
   final Function onDismissed;
 
-  const PlayerListElementWidget(this.player, [this.onDismissed = nop]);
-  State<StatefulWidget> createState() => new PlayerListElementWidgetState();
+  const PlayerListElement(this.player, [this.onDismissed = nop]);
+  State<StatefulWidget> createState() => new PlayerListElementState();
 }
 
-class PlayerListElementWidgetState extends State<PlayerListElementWidget> {
+class PlayerListElementState extends State<PlayerListElement> {
   Widget build(BuildContext con) => new TapNav<Null>(
-      builder: (BuildContext con) => new PlayerDetailWidget(widget.player),
+      builder: (BuildContext con) => new PlayerDetail(widget.player),
       onDismissed: (widget.onDismissed),
       child: new Row(
         children: [
