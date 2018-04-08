@@ -114,7 +114,8 @@ Future<Iterable<Team>> _fetchEventTeams(String eventid) async =>
 
 Future<List<Team>> dpgsFetchTournamentTeams(Tournament t) async =>
     (await Future.wait((await _expandEventIds(t)).map(_fetchEventTeams)))
-        .expand((l) => l);
+        .expand((l) => l)
+        .toList();
 
 Future<Iterable<String>> _fetchEventsForEventGroup(String gid) async =>
     (await _fetchPGRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))

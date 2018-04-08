@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
 import 'package:meta/meta.dart';
+import 'package:range/range.dart';
 
 class TournamentSchedule {
   final Tournament tournament;
@@ -21,7 +24,15 @@ class TournamentSchedule {
         for (var j = 0; j < playtimes[i].length; j++) yield playtimes[i][j];
   }
 
+  Iterable<DateTime> get dates =>
+      tournament.dates.length > 7 ? [] : tournament.dates;
+
   bool playerIsPlaying(Player p) => playtimesForPlayer(p).isNotEmpty;
+
+  bool get hasFullRosters =>
+      teams.isNotEmpty && rosters.every((r) => r.isNotEmpty);
+
+  Iterable<DateTime> get flatPlaytimes => playtimes.expand((l) => l);
 
   Map<String, dynamic> toMap() => {
         'tournament': tournament.toMap(),
@@ -36,10 +47,20 @@ class TournamentSchedule {
       new TournamentSchedule(
           tournament: new Tournament.fromMap(m['tournament']),
           teams: (m['teams'] ?? []).map(Team.fromMap).toList(),
-          rosters: (m['rosters'] ?? [])
-              .map((l) => l.map(Player.fromWLEntry).toList())
+          rosters: (_listify(m['rosters']) ?? [])
+              .map((l) => (l ?? []).map(Player.fromWLEntry).toList())
               .toList(),
-          playtimes: (m['playtimes'] ?? [])
-              .map((l) => l.map(DateTime.parse).toList())
+          playtimes: (_listify(m['playtimes']) ?? [])
+              .map((l) => (l ?? []).map(DateTime.parse).toList())
               .toList());
+}
+
+List _listify(o) {
+  if (o is List)
+    return o;
+  else if (o is Map) {
+    final int length = o.keys.map((s) => int.parse(s)).fold(-1, max) + 1;
+    return range(length).map((i) => o[i]).toList();
+  } else
+    return [];
 }
