@@ -20,12 +20,14 @@ class Player {
   String teamSummer;
   String teamFall;
   String photoUrl;
+  String commitment;
   bool populated;
   bool watchlist;
 
   Player(this.pgid, Document html) {
     populate(html);
   }
+
   Future<Null> populateAsync(PlayerCache pc) async {
     await pc.init();
     await pc.getPlayerMap(pgid).then((m) => populateFromMap(m));
@@ -51,6 +53,7 @@ class Player {
     photoUrl = html
         .querySelector("#ContentPlaceHolder1_Bio1_imgMainPlayerImage")
         .attributes['src'];
+    commitment = html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit").text;
     populated = true;
   }
 
@@ -62,6 +65,7 @@ class Player {
     populated = false;
   }
 
+  // Get an unpopulated player object from a watchlist entry.
   static fromWLEntry(Map<String, Map<String, dynamic>> wle) {
     final pgid = wle.keys.first;
     return new Player.unpopulated(
@@ -90,6 +94,7 @@ class Player {
     teamSummer = kv['teamSummer'];
     teamFall = kv['teamFall'];
     photoUrl = kv['photoUrl'];
+    commitment = kv['commitment'];
     populated = true;
   }
 
@@ -112,6 +117,7 @@ class Player {
         "teamSummer": teamSummer,
         "teamFall": teamFall,
         "photoUrl": photoUrl,
+        "commitment": commitment,
       };
 
   void addIfNonNull(
@@ -134,6 +140,7 @@ class Player {
     addIfNonNull(details, "Hometown", town);
     addIfNonNull(details, "Summer team", teamSummer);
     addIfNonNull(details, "Fall team", teamFall);
+    addIfNonNull(details, "Commitment", commitment);
     return details;
   }
 
