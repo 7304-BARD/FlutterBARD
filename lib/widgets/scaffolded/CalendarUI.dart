@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:range/range.dart';
 
+import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
@@ -29,13 +30,13 @@ class DaySquare extends StatelessWidget {
     if (drawn) {
       final children = <Widget>[new Text("${day.day}")];
       final scon = ScheduleContext.of(con);
-      if (scon.scheds.any((s) => scon.wl
-          .any((p) => s.playtimesForPlayer(p).any((d) => _isSameDay(d, day)))))
+      final todayScheds = scon.scheds
+          .where((s) => s.dates.any((d) => Dates.isSameDay(d, day)))
+          .toList();
+      if (todayScheds.any((s) => scon.wl.any(
+          (p) => s.playtimesForPlayer(p).any((d) => Dates.isSameDay(d, day)))))
         children.add(_watchlistEvent);
       else {
-        final todayScheds = scon.scheds
-            .where((s) => s.dates.any((d) => _isSameDay(d, day)))
-            .toList();
         if (todayScheds.isNotEmpty) {
           children.add(todayScheds.every((s) => s.hasFullRosters)
               ? _eventWithRoster
@@ -71,7 +72,7 @@ class WeekdayRow extends StatelessWidget {
   const WeekdayRow();
 
   build(BuildContext con) => new Row(
-      children: const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      children: Dates.weekdayAbbrevs
           .map((l) => new Expanded(
               child: new Center(
                   child: new Text(l,
@@ -89,36 +90,6 @@ class MonthGrid extends StatelessWidget {
               (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))
           as List<WeekRow>));
 }
-
-const months = const [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
-
-String _formatMonth(DateTime m) => "${months[m.month - 1]} ${m.year}";
-
-int _monthStartDay(DateTime m) => new DateTime(m.year, m.month).weekday % 7;
-
-DateTime _prevMonth(DateTime m) => m.month == 1
-    ? new DateTime(m.year - 1, 12)
-    : new DateTime(m.year, m.month - 1);
-
-DateTime _nextMonth(DateTime m) => m.month == 12
-    ? new DateTime(m.year + 1, 1)
-    : new DateTime(m.year, m.month + 1);
-
-bool _isSameDay(DateTime a, DateTime b) =>
-    a.year == b.year && a.month == b.month && a.day == b.day;
 
 class CalendarUIState extends State<CalendarUI> {
   DateTime month;
@@ -142,29 +113,26 @@ class CalendarUIState extends State<CalendarUI> {
   }
 
   build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text(_formatMonth(month)), actions: [
+      appBar: new AppBar(title: new Text(Dates.formatMonth(month)), actions: [
         new IconButton(
             icon: const Icon(Icons.navigate_before),
             onPressed: () {
               setState(() {
-                month = _prevMonth(month);
+                month = Dates.prevMonth(month);
               });
             }),
         new IconButton(
             icon: const Icon(Icons.navigate_next),
             onPressed: () {
               setState(() {
-                month = _nextMonth(month);
+                month = Dates.nextMonth(month);
               });
             })
       ]),
       body: new ScheduleContext(
           scheds: scheds,
           wl: watchlist,
-          child: new MonthGrid(
-              month,
-              month.subtract(
-                  new Duration(days: _monthStartDay(month) + month.day - 1)))));
+          child: new MonthGrid(month, Dates.monthStartDate(month))));
 }
 
 class ScheduleContext extends InheritedWidget {

@@ -1,3 +1,4 @@
+import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
@@ -102,6 +103,6 @@ class TeamRosterListingState extends State<TeamRosterListing> {
           children: []
             ..addAll(playtimes.map((p) => new Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: new Text(p.toIso8601String()))))
+                child: new Text(Dates.formatLong(p)))))
             ..addAll(players.map((p) => new PlayerListElement(p)))));
 }
