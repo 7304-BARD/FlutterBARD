@@ -53,7 +53,11 @@ class Player {
     photoUrl = html
         .querySelector("#ContentPlaceHolder1_Bio1_imgMainPlayerImage")
         .attributes['src'];
-    commitment = html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit").text;
+
+    // We don't have access to player commitments on some players.
+    commitment =
+        html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit")?.text ?? "";
+
     populated = true;
   }
 
