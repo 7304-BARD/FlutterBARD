@@ -38,12 +38,38 @@ doFBaseMessagingSetup() {
   });
 }
 
+final _colorsBuzzGold = const MaterialColor(0xffeaaa00, const {
+  50: const Color(0xffFCF5E0),
+  100: const Color(0xffF9E6B3),
+  200: const Color(0xffF5D580),
+  300: const Color(0xffF0C44D),
+  400: const Color(0xffEDB726),
+  500: const Color(0xffEAAA00),
+  600: const Color(0xffE7A300),
+  700: const Color(0xffE49900),
+  800: const Color(0xffE19000),
+  900: const Color(0xffDB7F00),
+});
+
+final _colorsTechBlue = const MaterialColor(0xff003057, const {
+  50: const Color(0xffe0e6eb),
+  100: const Color(0xffb3c1cd),
+  200: const Color(0xff8098ab),
+  300: const Color(0xff4d6e89),
+  400: const Color(0xff264f70),
+  500: const Color(0xff003057),
+  600: const Color(0xff002b4f),
+  700: const Color(0xff002446),
+  800: const Color(0xff001e3c),
+  900: const Color(0xff00132c),
+});
+
 class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => new MaterialApp(
         title: 'BARD',
         theme: new ThemeData(
-          primarySwatch: Colors.orange,
-          accentColor: const Color(0xffffaabb),
+          primarySwatch: _colorsTechBlue,
+          accentColor: _colorsBuzzGold,
         ),
         home: new AsyncLoader(
           initState: () async => await FirebaseAuth.instance.currentUser(),

@@ -45,13 +45,18 @@ class Top50State extends State<Top50> {
         new Text("Top Players of"),
         new Padding(
             padding: const EdgeInsets.all(8.0),
-            child: new DropdownButton(
-                value: year,
-                items: _getYears(),
-                onChanged: (y) {
-                  year = y;
-                  refresh();
-                })),
+            child: new Theme(
+                data: Theme
+                    .of(con)
+                    .copyWith(canvasColor: Theme.of(con).primaryColor),
+                child: new DropdownButton(
+                    style: Theme.of(con).primaryTextTheme.title,
+                    value: year,
+                    items: _getYears(),
+                    onChanged: (y) {
+                      year = y;
+                      refresh();
+                    }))),
       ])),
       body: new ListView(
           children: new List.unmodifiable(
