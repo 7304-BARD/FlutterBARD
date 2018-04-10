@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:range/range.dart';
 
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
@@ -69,8 +68,9 @@ class WeekRow extends StatelessWidget {
   build(BuildContext con) => new Expanded(
       child: new Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: range(7).map(
-              (i) => new DaySquare(month, week.add(new Duration(days: i))))));
+          children: [0, 1, 2, 3, 4, 5, 6]
+              .map((i) => new DaySquare(month, week.add(new Duration(days: i))))
+              .toList()));
 }
 
 class WeekdayRow extends StatelessWidget {
@@ -91,9 +91,8 @@ class MonthGrid extends StatelessWidget {
   const MonthGrid(this.month, this.start);
 
   build(BuildContext con) => new Column(
-      children: [const WeekdayRow()]..addAll(range(5).map(
-              (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))
-          as List<WeekRow>));
+      children: [const WeekdayRow()]..addAll([0, 1, 2, 3, 4].map(
+          (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))));
 }
 
 class CalendarUIState extends State<CalendarUI> {

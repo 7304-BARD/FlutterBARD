@@ -2,7 +2,6 @@ import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:flutter/material.dart';
-import 'package:range/range.dart';
 
 class Top50 extends StatefulWidget {
   State<StatefulWidget> createState() => new Top50State();
@@ -11,7 +10,7 @@ class Top50 extends StatefulWidget {
 class Top50State extends State<Top50> {
   static final int yearNow = new DateTime.now().year;
   int year = new DateTime.now().year;
-  List<int> _years = range(yearNow, yearNow + 4).toList();
+  List<int> _years = [yearNow];
   List<Player> players = [];
 
   makeYears() async {

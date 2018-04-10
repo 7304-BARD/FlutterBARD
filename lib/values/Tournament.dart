@@ -1,6 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:range/range.dart';
-
 import 'package:FlutterBARD/dates.dart';
 
 class Tournament {
@@ -39,7 +37,7 @@ class Tournament {
     final end = startEnd.length > 1
         ? Dates.parsePGShort(startEnd[1], start.year, start.month)
         : start;
-    for (int i in range(end.difference(start).inDays + 1))
+    for (int i = 0; i < end.difference(start).inDays + 1; i++)
       yield start.add(new Duration(days: i));
   }
 }

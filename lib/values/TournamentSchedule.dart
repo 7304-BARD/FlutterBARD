@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
 import 'package:meta/meta.dart';
-import 'package:range/range.dart';
 
 @immutable
 class TournamentSchedule {
