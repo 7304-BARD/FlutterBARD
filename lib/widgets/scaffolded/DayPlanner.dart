@@ -19,11 +19,14 @@ class DayPlanner extends StatelessWidget {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text(Dates.formatShort(day))),
       body: new ListView(
-          children:
-              (scheds.map((s) => s.matchupRosters).expand((l) => l).toList()
+          children: (scheds
+                  .map((s) => s.matchupRosters)
+                  .expand((l) => l)
+                  .where((mr) => Dates.isSameDay(day, mr.matchup.playtime))
+                  .toList()
                     ..sort())
-                  .map((mr) => new MatchupRosterListing(mr, watchlist))
-                  .toList()));
+              .map((mr) => new MatchupRosterListing(mr, watchlist))
+              .toList()));
 }
 
 class MatchupRosterListing extends StatelessWidget {
