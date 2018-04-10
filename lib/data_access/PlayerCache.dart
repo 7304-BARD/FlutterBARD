@@ -73,18 +73,20 @@ class PlayerCache {
 
   Future<List<String>> getPlayerNotes(Player p) async {
     final dbref = (await getNotesDBRef()).child('${p.pgid}');
-    final notes = ((await dbref.orderByKey().once()).value ?? {}).values;
-    return notes.toList();
+    return ((await dbref.orderByKey().once()).value ?? {})
+        .values
+        .cast<String>()
+        .toList();
   }
 
-  Future<List<Map<String, Map<String, dynamic>>>> getWatchlistEntries() async {
+  Future<dynamic> getWatchlistEntries() async {
     final dbref = await getWatchlistDBRef();
     final entries = (await dbref.once()).value ?? {};
     return entries.keys.map((k) => {k: entries[k]}).toList();
   }
 
   Future<List<Player>> getWatchlistPlayers() async =>
-      (await getWatchlistEntries()).map(Player.fromWLEntry).toList();
+      (await getWatchlistEntries()).map<Player>(Player.fromWLEntry).toList();
 
   Future<DatabaseReference> getWatchlistEntryRef(String pgid) async =>
       (await getWatchlistDBRef()).child(pgid);
@@ -112,6 +114,8 @@ class PlayerCache {
 
   Future<Iterable<TournamentSchedule>> getTournamentSchedules() async {
     final dbref = await getTScheduleDBRef();
-    return (await dbref.once()).value.map(TournamentSchedule.fromMap);
+    return (await dbref.once())
+        .value
+        .map<TournamentSchedule>(TournamentSchedule.fromMap);
   }
 }

@@ -35,8 +35,9 @@ class Top50State extends State<Top50> {
     refresh();
   }
 
-  _ddYear(y) => new DropdownMenuItem(value: y, child: new Text("$y"));
-  _getYears() => _years.map(_ddYear).toList();
+  DropdownMenuItem _ddYear(y) =>
+      new DropdownMenuItem(value: y, child: new Text("$y"));
+  List<DropdownMenuItem> _getYears() => _years.map(_ddYear).toList();
 
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(

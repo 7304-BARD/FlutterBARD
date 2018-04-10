@@ -48,16 +48,16 @@ class TournamentSchedule {
         'matchups': matchups.map((m) => m.toMap()).toList()
       };
 
-  static TournamentSchedule fromMap(Map<String, dynamic> m) =>
-      new TournamentSchedule(
-          tournament: new Tournament.fromMap(m['tournament']),
-          rosters: new Map.fromIterables(
-              m['rosters']?.keys ?? [],
-              m['rosters']
-                      ?.values
-                      ?.map((l) => l.map(Player.fromWLEntry).toList()) ??
-                  []),
-          matchups: m['matchups']?.map(Matchup.fromMap)?.toList() ?? []);
+  static List<Player> _playersFromWLE(dynamic l) =>
+      l.map<Player>(Player.fromWLEntry).toList();
+
+  static TournamentSchedule fromMap(dynamic m) => new TournamentSchedule(
+      tournament: new Tournament.fromMap(m['tournament']),
+      rosters: new Map.fromIterables(
+          m['rosters']?.keys?.cast<String>() ?? <String>[],
+          m['rosters']?.values?.map<List<Player>>(_playersFromWLE) ?? []),
+      matchups: m['matchups']?.map<Matchup>(Matchup.fromMap)?.toList() ??
+          <Matchup>[]);
 }
 
 @immutable

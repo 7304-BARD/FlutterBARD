@@ -24,9 +24,9 @@ class Matchup implements Comparable<Matchup> {
         'teams': teams.map((t) => t.toMap()).toList()
       };
 
-  static Matchup fromMap(Map<String, dynamic> m) => new Matchup(
+  static Matchup fromMap(dynamic m) => new Matchup(
       gameid: m['gameid'],
       playtime: DateTime.parse(m['playtime']),
       location: m['location'],
-      teams: m['teams']?.map(Team.fromMap)?.toList() ?? []);
+      teams: m['teams']?.map<Team>(Team.fromMap)?.toList() ?? <Team>[]);
 }

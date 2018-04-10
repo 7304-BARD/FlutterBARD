@@ -23,7 +23,7 @@ class Tournament {
         'isGroup': isGroup ? 1 : 0
       };
 
-  Tournament.fromMap(Map<String, dynamic> m)
+  Tournament.fromMap(dynamic m)
       : id = m['id'],
         title = m['title'],
         location = m['location'],

@@ -56,7 +56,8 @@ class Player {
 
     // We don't have access to player commitments on some players.
     commitment =
-        html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit")?.text ?? "";
+        html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit")?.text ??
+            "";
 
     populated = true;
   }
@@ -70,7 +71,7 @@ class Player {
   }
 
   // Get an unpopulated player object from a watchlist entry.
-  static fromWLEntry(Map<String, Map<String, dynamic>> wle) {
+  static Player fromWLEntry(dynamic wle) {
     final pgid = wle.keys.first;
     return new Player.unpopulated(
         pgid: pgid,
