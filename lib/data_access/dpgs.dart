@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
@@ -78,6 +79,42 @@ Iterable<Player> dpgsGetTournamentTeamRoster(Document doc) =>
           year: new RegExp(r'20\d\d').stringMatch(row.text));
     });
 
+Matchup _getMatchupForRows(DateTime day, Element game, Element teams) =>
+    new Matchup(
+        gameid: game.children[0].children[0].text,
+        playtime: Dates.parsePGTime(day, game.children[0].children[1].text),
+        location: game.children[1].text.split(new RegExp(r'\s+')).join(' '),
+        teams: teams
+            .querySelectorAll('a[href*="Tournaments/Teams"]')
+            .map(_teamFromElement)
+            .toList());
+
+Iterable<Matchup> _getEventMatchups(Document d) sync* {
+  final dateText = d.querySelector('*[id*="ScheduleDate"]')?.text;
+  final DateTime day =
+      dateText != null ? Dates.parsePGMedium(dateText) : new DateTime.now();
+  final games =
+      d.querySelector('div[id*="FullSchedule"]')?.querySelectorAll('div.row') ??
+          [];
+  final gameData = _stride(games, 2).iterator;
+  final teams = _stride(games.skip(1), 2).iterator;
+  while (gameData.moveNext() && teams.moveNext())
+    yield _getMatchupForRows(day, gameData.current, teams.current);
+}
+
+Future<Iterable<String>> dpgsGetTournamentScheduleDates(String eid) async =>
+    (await _fetchPGRaw(
+            'Events/TournamentSchedule.aspx', {'event': eid, 'Date': '1/1/1'}))
+        .querySelectorAll('a[id*="datepicker"]')
+        .map(_getID);
+
+Future<Iterable<Matchup>> dpgsGetTournamentScheduleMatchups(String eid) async =>
+    (await Future.wait((await dpgsGetTournamentScheduleDates(eid)).map((d) =>
+            _fetchPGRaw(
+                'Events/TournamentSchedule.aspx', {'event': eid, 'Date': d}))))
+        .map(_getEventMatchups)
+        .expand((l) => l);
+
 Iterable<DateTime> dpgsGetTournamentTeamPlaytimes(Document doc) => doc
     .querySelectorAll('div.repbg')
     .map((e) => e.querySelector('div.col-lg-3').children[1].text)
@@ -97,13 +134,15 @@ Future<Iterable<String>> _expandEventIds(Tournament t) async =>
 Future<Iterable<Team>> _fetchEventTeams(String eventid) async =>
     _getTournamentTeamAnchors(await _fetchPGRaw(
             'Events/TournamentTeams.aspx', {'event': eventid}))
-        .map(_getIdName)
-        .map((t) => new Team(t.item1, t.item2));
+        .map(_teamFromElement);
+
+Team _teamFromElement(Element e) => new Team(_getID(e), e.text);
+
+Future<List<Team>> _getEventsTeams(Iterable<String> eids) async =>
+    (await Future.wait(eids.map(_fetchEventTeams))).expand((l) => l).toList();
 
 Future<List<Team>> dpgsFetchTournamentTeams(Tournament t) async =>
-    (await Future.wait((await _expandEventIds(t)).map(_fetchEventTeams)))
-        .expand((l) => l)
-        .toList();
+    _getEventsTeams(await _expandEventIds(t));
 
 Future<Iterable<String>> _fetchEventsForEventGroup(String gid) async =>
     (await _fetchPGRaw('Schedule/GroupedEvents.aspx', {'gid': gid}))
@@ -112,17 +151,18 @@ Future<Iterable<String>> _fetchEventsForEventGroup(String gid) async =>
         .map(_getID);
 
 Future<TournamentSchedule> dpgsFetchScheduleForTournament(Tournament t) async {
-  final teams = (await dpgsFetchTournamentTeams(t)).toList();
+  final eids = (await _expandEventIds(t)).toList();
+  final teams = await _getEventsTeams(eids);
   final tpages = await Future.wait(teams.map(dpgsFetchTournamentTeamPage));
-  final rosters =
-      tpages.map(dpgsGetTournamentTeamRoster).map((r) => r.toList()).toList();
-  final playtimes = tpages
-      .map(dpgsGetTournamentTeamPlaytimes)
-      .map((p) => p.toList())
-      .toList();
+  final rosters = new Map.fromIterables(teams.map((t) => t.id),
+      tpages.map(dpgsGetTournamentTeamRoster).map((r) => r.toList()));
+  final matchups =
+      (await Future.wait(eids.map(dpgsGetTournamentScheduleMatchups)))
+          .expand((l) => l)
+          .toList();
 
   return new TournamentSchedule(
-      tournament: t, teams: teams, rosters: rosters, playtimes: playtimes);
+      tournament: t, rosters: rosters, matchups: matchups);
 }
 
 Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules() async =>

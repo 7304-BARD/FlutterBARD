@@ -14,7 +14,7 @@ class PlayerListElement extends StatefulWidget {
 }
 
 class PlayerListElementState extends State<PlayerListElement> {
-  Widget build(BuildContext con) => new TapNav<Null>(
+  Widget build(BuildContext con) => new TapNav(
       builder: (BuildContext con) => new PlayerDetail(widget.player),
       onDismissed: (widget.onDismissed),
       child: new Row(

@@ -8,7 +8,7 @@ tapNav(WidgetBuilder builder, BuildContext con, [Function onDismissed]) => () {
           .whenComplete(onDismissed ?? () {});
     };
 
-class TapNav<T> extends StatelessWidget {
+class TapNav extends StatelessWidget {
   final WidgetBuilder builder;
   final Function onDismissed;
   final Widget child;

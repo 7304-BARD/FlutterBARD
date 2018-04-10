@@ -1,28 +1,35 @@
 import 'dart:math';
 
+import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
 import 'package:meta/meta.dart';
 import 'package:range/range.dart';
 
+@immutable
 class TournamentSchedule {
   final Tournament tournament;
-  final List<Team> teams;
-  final List<List<Player>> rosters;
-  final List<List<DateTime>> playtimes;
+  final List<Matchup> matchups;
+  final Map<String, List<Player>> rosters;
 
   const TournamentSchedule(
       {@required this.tournament,
-      @required this.teams,
       @required this.rosters,
-      @required this.playtimes});
+      @required this.matchups});
 
-  Iterable<DateTime> playtimesForPlayer(Player p) sync* {
-    for (var i = 0; i < rosters.length; i++)
-      if (rosters[i].any((p2) => p2.pgid == p.pgid))
-        for (var j = 0; j < playtimes[i].length; j++) yield playtimes[i][j];
+  Iterable<DateTime> playtimesForPlayer(Player p) {
+    final playerTeams = teams
+        .where((t) => rosters[t.id]?.any((p2) => p2.pgid == p.pgid) ?? false)
+        .toList();
+    return matchups
+        .where(
+            (m) => m.teams.any((t) => playerTeams.any((t2) => t2.id == t.id)))
+        .map((m) => m.playtime);
   }
+
+  Set<Team> get teams =>
+      new Set.from(matchups.map((m) => m.teams).expand((l) => l));
 
   Iterable<DateTime> get dates =>
       tournament.dates.length > 7 ? [] : tournament.dates;
@@ -30,37 +37,38 @@ class TournamentSchedule {
   bool playerIsPlaying(Player p) => playtimesForPlayer(p).isNotEmpty;
 
   bool get hasFullRosters =>
-      teams.isNotEmpty && rosters.every((r) => r.isNotEmpty);
+      teams.isNotEmpty && rosters.values.every((r) => r.isNotEmpty);
 
-  Iterable<DateTime> get flatPlaytimes => playtimes.expand((l) => l);
+  Iterable<DateTime> get flatPlaytimes => matchups.map((m) => m.playtime);
+
+  Iterable<MatchupRosters> get matchupRosters =>
+      matchups.map((m) => new MatchupRosters(m, rosters));
 
   Map<String, dynamic> toMap() => {
         'tournament': tournament.toMap(),
-        'teams': teams.map((t) => t.toMap()).toList(),
-        'rosters':
-            rosters.map((l) => l.map((p) => p.toWLEntry()).toList()).toList(),
-        'playtimes':
-            playtimes.map((l) => l.map((d) => d.toString()).toList()).toList(),
+        'rosters': new Map.fromIterables(rosters.keys,
+            rosters.values.map((l) => l.map((p) => p.toWLEntry()).toList())),
+        'matchups': matchups.map((m) => m.toMap()).toList()
       };
 
   static TournamentSchedule fromMap(Map<String, dynamic> m) =>
       new TournamentSchedule(
           tournament: new Tournament.fromMap(m['tournament']),
-          teams: (m['teams'] ?? []).map(Team.fromMap).toList(),
-          rosters: (_listify(m['rosters']) ?? [])
-              .map((l) => (l ?? []).map(Player.fromWLEntry).toList())
-              .toList(),
-          playtimes: (_listify(m['playtimes']) ?? [])
-              .map((l) => (l ?? []).map(DateTime.parse).toList())
-              .toList());
+          rosters: new Map.fromIterables(
+              m['rosters']?.keys ?? [],
+              m['rosters']
+                      ?.values
+                      ?.map((l) => l.map(Player.fromWLEntry).toList()) ??
+                  []),
+          matchups: m['matchups']?.map(Matchup.fromMap)?.toList() ?? []);
 }
 
-List _listify(o) {
-  if (o is List)
-    return o;
-  else if (o is Map) {
-    final int length = o.keys.map((s) => int.parse(s)).fold(-1, max) + 1;
-    return range(length).map((i) => o[i]).toList();
-  } else
-    return [];
+@immutable
+class MatchupRosters extends Comparable<MatchupRosters> {
+  final Matchup matchup;
+  final Map<String, List<Player>> rosters;
+
+  MatchupRosters(this.matchup, this.rosters);
+
+  int compareTo(MatchupRosters m) => matchup.compareTo(m.matchup);
 }

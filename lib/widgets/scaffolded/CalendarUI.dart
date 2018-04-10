@@ -6,6 +6,8 @@ import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:FlutterBARD/widgets/scaffolded/DayPlanner.dart';
 
 class CalendarUI extends StatefulWidget {
   final DateTime month;
@@ -44,12 +46,15 @@ class DaySquare extends StatelessWidget {
         }
       }
       return new Expanded(
-          child: new Container(
-              decoration: new BoxDecoration(
-                  border: new Border.all(color: Colors.grey, width: 1.0)),
-              child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: children)));
+          child: new TapNav(
+              builder: (BuildContext _) => new DayPlanner(
+                  scheds: todayScheds, watchlist: scon.wl, day: day),
+              child: new Container(
+                  decoration: new BoxDecoration(
+                      border: new Border.all(color: Colors.grey, width: 1.0)),
+                  child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: children))));
     } else {
       return new Expanded(child: new Container());
     }

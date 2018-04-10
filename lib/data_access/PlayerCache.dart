@@ -66,7 +66,7 @@ class PlayerCache {
       (await getDBRef()).child('player_notes');
 
   Future<DatabaseReference> getTScheduleDBRef() async =>
-      (await getDBRootRef()).child('tsched');
+      (await getDBRootRef()).child('tsched_v2');
 
   Future<Null> pushPlayerNote(Player p, String note) async =>
       (await getNotesDBRef()).child('${p.pgid}').push().set(note);

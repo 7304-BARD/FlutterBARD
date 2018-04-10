@@ -14,17 +14,31 @@ abstract class Dates {
         year, month > 0 ? month : defaultMonth, int.parse(match[3]));
   }
 
+  static DateTime parsePGMedium(String d) {
+    final match = new RegExp(r'\s*(\d\d?)/(\d\d?)/(\d\d\d\d)\s*').firstMatch(d);
+    return new DateTime(
+        int.parse(match[3]), int.parse(match[1]), int.parse(match[2]));
+  }
+
+  static int _delocalizeHour(String hour, String ap) =>
+      (int.parse(hour) % 12) + (ap == 'A' ? 0 : 12);
+
   static DateTime parsePGLong(String s) {
     final match = new RegExp(
             r'^\s*(\d?\d)/(\d?\d)/(\d\d\d\d)\s*(\d?\d):(\d\d)\s*(A|P)M\s*$')
         .firstMatch(s);
-    final dt = new DateTime(
+    return new DateTime(
         int.parse(match[3]),
         int.parse(match[1]),
         int.parse(match[2]),
-        (int.parse(match[4]) % 12) + (match[6] == 'A' ? 0 : 12),
+        _delocalizeHour(match[4], match[6]),
         int.parse(match[5]));
-    return dt;
+  }
+
+  static DateTime parsePGTime(DateTime day, String s) {
+    final match = new RegExp(r'\s*^(\d?\d):(\d\d)\s*(A|P)M\s*$').firstMatch(s);
+    return new DateTime(day.year, day.month, day.day,
+        _delocalizeHour(match[1], match[3]), int.parse(match[2]));
   }
 
   static const monthAbbrevs = const [
