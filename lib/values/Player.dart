@@ -86,7 +86,7 @@ class Player {
         pgid: {'name': name, 'year': year, 'pos': pos}
       };
 
-  populateFromMap(Map<String, dynamic> kv) {
+  populateFromMap(dynamic kv) {
     pgid = kv['pgid'];
     name = kv['name'];
     year = kv['year'];
@@ -105,7 +105,7 @@ class Player {
     populated = true;
   }
 
-  Player.fromMap(Map<String, dynamic> kv) {
+  Player.fromMap(dynamic kv) {
     populateFromMap(kv);
   }
 
