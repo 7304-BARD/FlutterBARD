@@ -1,4 +1,4 @@
-import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/PlayerNoteEntry.dart';
@@ -49,19 +49,18 @@ class PlayerDetail extends StatefulWidget {
 }
 
 class PlayerDetailState extends State<PlayerDetail> {
-  PlayerCache pcache = new PlayerCache();
   List<String> notes = [];
 
   initState() {
     super.initState();
     widget.player.isWatched().whenComplete(() => setState(() {}));
     if (!widget.player.populated)
-      widget.player.populateAsync(pcache).whenComplete(() => setState(() {}));
+      widget.player.populateAsync().whenComplete(() => setState(() {}));
     refreshNotes();
   }
 
   void refreshNotes() async {
-    final n = await pcache.getPlayerNotes(widget.player);
+    final n = await FirebaseAccess.getPlayerNotes(widget.player);
     setState(() {
       notes = n;
     });
@@ -81,9 +80,8 @@ class PlayerDetailState extends State<PlayerDetail> {
                     ? Icons.cloud_off
                     : widget.player.watchlist ? Icons.star : Icons.star_border),
                 onPressed: () {
-                  pcache
-                      .init()
-                      .whenComplete(() => pcache.toggleWatchlist(widget.player))
+                  FirebaseAccess
+                      .toggleWatchlist(widget.player)
                       .whenComplete(() => setState(() => null));
                 })
           ]),

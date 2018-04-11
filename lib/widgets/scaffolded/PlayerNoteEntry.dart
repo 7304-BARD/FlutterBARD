@@ -1,4 +1,4 @@
-import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,7 @@ class PlayerNoteEntryState extends State<PlayerNoteEntry> {
         new IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
-              new PlayerCache().pushPlayerNote(widget.player, cont.text);
+              FirebaseAccess.pushPlayerNote(widget.player, cont.text);
               Navigator.of(con).pop();
             }),
       ]),

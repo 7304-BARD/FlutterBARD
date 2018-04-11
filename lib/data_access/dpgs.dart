@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:FlutterBARD/dates.dart';
-import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
@@ -169,8 +169,8 @@ Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules() async =>
     Future.wait(
         (await dpgsFetchTournamentsData()).map(dpgsFetchScheduleForTournament));
 
-Future<Null> dpgsUpdateTournamentSchedules() async => new PlayerCache()
-    .putTournamentSchedules(await dpgsFetchTournamentSchedules());
+Future<Null> dpgsUpdateTournamentSchedules() async =>
+    FirebaseAccess.putTournamentSchedules(await dpgsFetchTournamentSchedules());
 
 Tuple2<String, String> _getIdName(Element e) => new Tuple2(_getID(e), e.text);
 

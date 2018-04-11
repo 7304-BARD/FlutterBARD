@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import 'package:FlutterBARD/dates.dart';
-import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
@@ -102,9 +102,8 @@ class CalendarUIState extends State<CalendarUI> {
   CalendarUIState(this.month);
 
   void loadSchedCon() async {
-    final pc = new PlayerCache();
-    final ss = await pc.getTournamentSchedules();
-    final wl = await pc.getWatchlistPlayers();
+    final ss = await FirebaseAccess.getTournamentSchedules();
+    final wl = await FirebaseAccess.getWatchlistPlayers();
     setState(() {
       scheds = ss.toList();
       watchlist = wl.toList();

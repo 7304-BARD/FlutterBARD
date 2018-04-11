@@ -1,4 +1,4 @@
-import 'package:FlutterBARD/data_access/PlayerCache.dart';
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
@@ -11,12 +11,10 @@ class Watchlist extends StatefulWidget {
 }
 
 class WatchlistState extends State<Watchlist> {
-  PlayerCache pcache = new PlayerCache();
   List<Player> players = [];
 
   void refreshPlayers() async {
-    await pcache.init();
-    players = await pcache.getWatchlistPlayers();
+    players = await FirebaseAccess.getWatchlistPlayers();
     setState(() {});
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
 import 'package:html/dom.dart';
 import 'package:meta/meta.dart';
@@ -28,7 +29,8 @@ class Player {
     populate(html);
   }
 
-  Future<Null> populateAsync(PlayerCache pc) async {
+  Future<Null> populateAsync() async {
+    final pc = new PlayerCache();
     await pc.init();
     await pc.getPlayerMap(pgid).then((m) => populateFromMap(m));
   }
@@ -150,7 +152,7 @@ class Player {
   }
 
   Future<bool> isWatched() async {
-    if (watchlist == null) watchlist = await new PlayerCache().isWatched(pgid);
+    if (watchlist == null) watchlist = await FirebaseAccess.isWatched(pgid);
     return watchlist;
   }
 }
