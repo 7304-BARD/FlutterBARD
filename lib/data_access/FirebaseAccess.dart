@@ -37,6 +37,12 @@ class FirebaseAccess {
         .toList();
   }
 
+  static Future<Null> updateWLRank(Player p) async {
+    (await getWatchlistEntryRef(p.pgid))
+        .child('watchlistRank')
+        .set(p.watchlistRank);
+  }
+
   static Future<dynamic> getWatchlistEntries() async {
     final dbref = await getWatchlistDBRef();
     final entries = (await dbref.once()).value ?? {};
@@ -44,14 +50,20 @@ class FirebaseAccess {
   }
 
   static Future<List<Player>> getWatchlistPlayers() async =>
-      (await getWatchlistEntries()).map<Player>(Player.fromWLEntry).toList();
+      (await getWatchlistEntries()).map<Player>(Player.fromWLEntry).toList()
+        ..sort();
 
   static Future<DatabaseReference> getWatchlistEntryRef(String pgid) async =>
       (await getWatchlistDBRef()).child(pgid);
 
   static Future<Null> addToWatchlist(Player p) async {
+    final watchlistPlayers = await getWatchlistPlayers();
+
     p.watchlist = true;
     await (await getWatchlistEntryRef(p.pgid)).set(p.toWLEntry()[p.pgid]);
+
+    if (await p.updateWatchlistRank(null, watchlistPlayers.first))
+      await Player.updateWatchlistRanks(watchlistPlayers..insert(0, p));
   }
 
   static Future<Null> removeFromWatchlist(Player p) async {

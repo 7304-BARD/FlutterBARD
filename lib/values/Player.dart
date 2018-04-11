@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:FlutterBARD/misc.dart';
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/data_access/PlayerCache.dart';
 import 'package:html/dom.dart';
 import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
 
-class Player {
+class Player implements Comparable<Player> {
   String pgid;
   String name;
   String year;
@@ -24,6 +25,7 @@ class Player {
   String commitment;
   bool populated;
   bool watchlist;
+  int watchlistRank;
 
   Player(this.pgid, Document html) {
     populate(html);
@@ -79,11 +81,17 @@ class Player {
         pgid: pgid,
         name: wle[pgid]['name'],
         pos: wle[pgid]['pos'],
-        year: wle[pgid]['year']);
+        year: wle[pgid]['year'])
+      ..watchlistRank = wle[pgid]['watchlistRank'];
   }
 
   Map<String, Map<String, dynamic>> toWLEntry() => {
-        pgid: {'name': name, 'year': year, 'pos': pos}
+        pgid: {
+          'name': name,
+          'year': year,
+          'pos': pos,
+          'watchlistRank': watchlistRank
+        }
       };
 
   populateFromMap(dynamic kv) {
@@ -154,5 +162,36 @@ class Player {
   Future<bool> isWatched() async {
     if (watchlist == null) watchlist = await FirebaseAccess.isWatched(pgid);
     return watchlist;
+  }
+
+  int compareTo(Player p) => watchlistRank == null
+      ? 1
+      : p.watchlistRank == null ? -1 : watchlistRank.compareTo(p.watchlistRank);
+
+  /// Updates [watchlistRank] to place this between [before] and [after].
+  ///
+  /// Returns true if the entire watchlist needs to be re-ranked.
+  /// Normally, we avoid this, since each update must be written to FireBase.
+  /// See [updateWatchlistRanks].
+  Future<bool> updateWatchlistRank(Player before, Player after) async {
+    int beforeRank = before?.watchlistRank ?? -0x20000000;
+    int afterRank = after?.watchlistRank ?? 0x1fffffff;
+    watchlistRank = average2(beforeRank, afterRank);
+    if (watchlistRank == beforeRank || watchlistRank == afterRank) return true;
+
+    await FirebaseAccess.updateWLRank(this);
+    return false;
+  }
+
+  /// Updates [watchlistRank] for every watchlist player.
+  ///
+  /// We spread the players across the available namespace,
+  /// to allow efficient insertions when a single player is moved.
+  static Future<Null> updateWatchlistRanks(List<Player> watchlist) async {
+    range(watchlist.length).forEach((int i) {
+      watchlist[i].watchlistRank =
+          (i + 1) * (0x1fffffff ~/ (watchlist.length + 2));
+    });
+    await Future.wait(watchlist.map(FirebaseAccess.updateWLRank));
   }
 }
