@@ -47,7 +47,7 @@ class DaySquare extends StatelessWidget {
       return new Expanded(
           child: new TapNav(
               builder: (BuildContext _) => new DayPlanner(
-                  scheds: todayScheds, watchlist: scon.wl, day: day),
+                  scheds: scon.scheds, watchlist: scon.wl, day: day),
               child: new Container(
                   decoration: new BoxDecoration(
                       border: new Border.all(color: Colors.grey, width: 1.0)),
@@ -115,27 +115,37 @@ class CalendarUIState extends State<CalendarUI> {
     loadSchedCon();
   }
 
+  void _nextMonth() {
+    setState(() {
+      month = Dates.nextMonth(month);
+    });
+  }
+
+  void _previousMonth() {
+    setState(() {
+      month = Dates.prevMonth(month);
+    });
+  }
+
   build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text(Dates.formatMonth(month)), actions: [
         new IconButton(
-            icon: const Icon(Icons.navigate_before),
-            onPressed: () {
-              setState(() {
-                month = Dates.prevMonth(month);
-              });
-            }),
+            icon: const Icon(Icons.navigate_before), onPressed: _previousMonth),
         new IconButton(
-            icon: const Icon(Icons.navigate_next),
-            onPressed: () {
-              setState(() {
-                month = Dates.nextMonth(month);
-              });
-            })
+            icon: const Icon(Icons.navigate_next), onPressed: _nextMonth)
       ]),
       body: new ScheduleContext(
           scheds: scheds,
           wl: watchlist,
-          child: new MonthGrid(month, Dates.monthStartDate(month))));
+          child: new Dismissible(
+              onDismissed: (DismissDirection dir) {
+                if (dir == DismissDirection.startToEnd)
+                  _previousMonth();
+                else
+                  _nextMonth();
+              },
+              key: new ObjectKey(new DateTime.now()),
+              child: new MonthGrid(month, Dates.monthStartDate(month)))));
 }
 
 class ScheduleContext extends InheritedWidget {

@@ -1,5 +1,6 @@
 abstract class Dates {
-  static String formatShort(DateTime d) => "${months[d.month - 1]} ${d.day}";
+  static String formatShort(DateTime d) =>
+      "${months[d.month - 1]} ${d.day}, ${weekdayAbbrevs[d.weekday % 7]}";
 
   static String formatLong(DateTime d) => d.toString();
 

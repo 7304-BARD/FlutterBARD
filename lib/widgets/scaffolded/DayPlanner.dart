@@ -8,7 +8,7 @@ import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/scaffolded/PlayerDetail.dart';
 
-class DayPlanner extends StatelessWidget {
+class DayPlanner extends StatefulWidget {
   final List<TournamentSchedule> scheds;
   final List<Player> watchlist;
   final DateTime day;
@@ -16,17 +16,49 @@ class DayPlanner extends StatelessWidget {
   DayPlanner(
       {@required this.scheds, @required this.watchlist, @required this.day});
 
+  createState() => new DayPlannerState(day);
+}
+
+class DayPlannerState extends State<DayPlanner> {
+  DateTime day;
+  DayPlannerState(this.day);
+
+  void _nextDay() {
+    setState(() {
+      day = day.add(const Duration(days: 1));
+    });
+  }
+
+  void _previousDay() {
+    setState(() {
+      day = day.subtract(const Duration(days: 1));
+    });
+  }
+
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text(Dates.formatShort(day))),
-      body: new ListView(
-          children: (scheds
-                  .map((s) => s.matchupRosters)
-                  .expand((l) => l)
-                  .where((mr) => Dates.isSameDay(day, mr.matchup.playtime))
-                  .toList()
-                    ..sort())
-              .map((mr) => new MatchupRosterListing(mr, watchlist))
-              .toList()));
+      appBar: new AppBar(title: new Text(Dates.formatShort(day)), actions: [
+        new IconButton(
+            icon: const Icon(Icons.navigate_before), onPressed: _previousDay),
+        new IconButton(
+            icon: const Icon(Icons.navigate_next), onPressed: _nextDay)
+      ]),
+      body: new Dismissible(
+          onDismissed: (DismissDirection dir) {
+            if (dir == DismissDirection.startToEnd)
+              _previousDay();
+            else
+              _nextDay();
+          },
+          key: new ObjectKey(new DateTime.now()),
+          child: new ListView(
+              children: (widget.scheds
+                      .map((s) => s.matchupRosters)
+                      .expand((l) => l)
+                      .where((mr) => Dates.isSameDay(day, mr.matchup.playtime))
+                      .toList()
+                        ..sort())
+                  .map((mr) => new MatchupRosterListing(mr, widget.watchlist))
+                  .toList())));
 }
 
 class MatchupRosterListing extends StatelessWidget {
