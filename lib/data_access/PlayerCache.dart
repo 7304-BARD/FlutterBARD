@@ -30,14 +30,24 @@ class PlayerCache {
 
   Future<Player> getPlayerForId(String id) async {
     final cpm = await db.get(id);
-    if (cpm == null) {
+    if (cpm == null || _isExpired(cpm)) {
       final Player player = await dpgsFetchPlayer(id);
-      await db.put(player.toMap(), player.pgid);
+      await db.put(player.toMap()..addAll({'expiry': _expiryTime().toString()}),
+          player.pgid);
       return player;
     } else {
       return new Player.fromMap(cpm);
     }
   }
+
+  static DateTime _expiryTime() =>
+      new DateTime.now().add(const Duration(days: 7));
+
+  static bool _isExpired(dynamic m) =>
+      DateTime
+          .parse(m['expiry'] ?? '1991-05-16 14:55:00')
+          .compareTo(new DateTime.now()) <
+      0;
 
   Future<List<Player>> getPlayersForIds(Iterable<String> ids) async {
     final List<Player> players = [];
