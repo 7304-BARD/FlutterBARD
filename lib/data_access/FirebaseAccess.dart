@@ -27,7 +27,7 @@ class FirebaseAccess {
       (await getDBRootRef()).child('tsched_v2');
 
   static Future<Null> pushPlayerNote(Player p, String note) async =>
-      (await getNotesDBRef()).child('${p.pgid}').push().set(note);
+      await (await getNotesDBRef()).child('${p.pgid}').push().set(note);
 
   static Future<List<String>> getPlayerNotes(Player p) async {
     final dbref = (await getNotesDBRef()).child('${p.pgid}');
@@ -38,7 +38,7 @@ class FirebaseAccess {
   }
 
   static Future<Null> updateWLRank(Player p) async {
-    (await getWatchlistEntryRef(p.pgid))
+    await (await getWatchlistEntryRef(p.pgid))
         .child('watchlistRank')
         .set(p.watchlistRank);
   }
