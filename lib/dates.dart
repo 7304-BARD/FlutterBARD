@@ -2,9 +2,11 @@ abstract class Dates {
   static String formatShort(DateTime d) =>
       "${months[d.month - 1]} ${d.day}, ${weekdayAbbrevs[d.weekday % 7]}";
 
-  static String formatLong(DateTime d) => d.toString();
+  static String formatLong(DateTime d) =>
+      [formatShort(d), formatTime(d)].join(' ');
 
-  static String formatTime(DateTime d) => "${d.hour}:${d.minute}";
+  static String formatTime(DateTime d) =>
+      "${d.hour}:${d.minute < 10 ? '0' : ''}${d.minute}";
 
   static String formatMonth(DateTime m) => "${months[m.month - 1]} ${m.year}";
 

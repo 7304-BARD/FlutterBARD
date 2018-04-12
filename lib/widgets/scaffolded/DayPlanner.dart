@@ -1,12 +1,11 @@
 import 'package:meta/meta.dart';
-import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
-import 'package:FlutterBARD/widgets/scaffolded/PlayerDetail.dart';
+import 'package:FlutterBARD/widgets/TapNav.dart';
 
 class DayPlanner extends StatefulWidget {
   final List<TournamentSchedule> scheds;
@@ -67,19 +66,28 @@ class MatchupRosterListing extends StatelessWidget {
 
   MatchupRosterListing(this.matchupRosters, this.watchlist);
 
-  Widget build(BuildContext con) => new Container(
-      decoration: new BoxDecoration(
-          border: new Border.all(color: Colors.lime, width: 1.0)),
-      child: new Column(
-          children: <Widget>[new MatchupListing(matchupRosters.matchup)]
-            ..addAll(matchupRosters.matchup.teams
-                .map((t) => matchupRosters.rosters[t.id])
-                .where((l) => l != null)
-                .expand((l) => l)
-                .where((p) => watchlist.any((p2) => p2.pgid == p.pgid))
-                .map((p) => new Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: new PlayerListElement(p))))));
+  Widget build(BuildContext con) {
+    final watchedPlayers = matchupRosters.matchup.teams
+        .map((t) => matchupRosters.rosters[t.id])
+        .where((l) => l != null)
+        .expand((l) => l)
+        .where((p) => watchlist.any((p2) => p2.pgid == p.pgid));
+    return new TapNav(
+        builder: (BuildContext Con) => new RosterListing(matchupRosters),
+        child: new Container(
+            decoration: new BoxDecoration(
+                color: watchedPlayers.isNotEmpty
+                    ? Theme.of(con).accentColor
+                    : null,
+                border: new Border.all(
+                    color: Theme.of(con).dividerColor, width: 1.0)),
+            child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[new MatchupListing(matchupRosters.matchup)]
+                  ..addAll(watchedPlayers.map((p) => new Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      child: new PlayerListElement(p)))))));
+  }
 }
 
 class MatchupListing extends StatelessWidget {
@@ -87,14 +95,32 @@ class MatchupListing extends StatelessWidget {
 
   MatchupListing(this.matchup);
 
-  Widget build(BuildContext con) => new Container(
-          child: new Column(
-              children: [
-        new KVText(
-            new Tuple2(Dates.formatLong(matchup.playtime), matchup.location)),
-        matchup.teams.length >= 2
-            ? new KVText(
-                new Tuple2(matchup.teams[0].name, matchup.teams[1].name))
-            : null
-      ].where((w) => w != null).toList()));
+  Widget build(BuildContext con) => new Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: ([Dates.formatTime(matchup.playtime), matchup.location]
+              ..addAll(matchup.teams.map((t) => t.name)))
+            .map((s) => new Text(s))
+            .toList(),
+      ));
+}
+
+class RosterListing extends StatelessWidget {
+  final MatchupRosters matchupRosters;
+  RosterListing(this.matchupRosters);
+
+  Widget build(BuildContext con) => new Scaffold(
+      appBar: new AppBar(
+          title: new Text(Dates.formatLong(matchupRosters.matchup.playtime))),
+      body: new ListView(
+          children: [
+        new Text(matchupRosters.matchup.location)
+      ]..addAll(matchupRosters.matchup.teams.map((t) => new Column(
+              children: [new Text(t.name)]..addAll(
+                  matchupRosters.rosters[t.id]?.map((p) => new PlayerListElement(p)) ??
+                      [
+                        new Text("Roster Not Available",
+                            style: const TextStyle(color: Colors.red))
+                      ]))))));
 }
