@@ -1,7 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterBARD/dates.dart';
-import 'package:FlutterBARD/values/Matchup.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
@@ -83,24 +82,27 @@ class MatchupRosterListing extends StatelessWidget {
                     color: Theme.of(con).dividerColor, width: 1.0)),
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[new MatchupListing(matchupRosters.matchup)]
-                  ..addAll(watchedPlayers.map((p) => new Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                      child: new PlayerListElement(p)))))));
+                children: <Widget>[new MatchupListing(matchupRosters)]..addAll(
+                    watchedPlayers.map((p) => new Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: new PlayerListElement(p)))))));
   }
 }
 
 class MatchupListing extends StatelessWidget {
-  final Matchup matchup;
+  final MatchupRosters matchupRosters;
 
-  MatchupListing(this.matchup);
+  MatchupListing(this.matchupRosters);
 
   Widget build(BuildContext con) => new Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: ([Dates.formatTime(matchup.playtime), matchup.location]
-              ..addAll(matchup.teams.map((t) => t.name)))
+        children: ([
+          Dates.formatTime(matchupRosters.matchup.playtime),
+          matchupRosters.tournament.location,
+          matchupRosters.matchup.location
+        ]..addAll(matchupRosters.matchup.teams.map((t) => t.name)))
             .map((s) => new Text(s))
             .toList(),
       ));
@@ -113,14 +115,18 @@ class RosterListing extends StatelessWidget {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(
           title: new Text(Dates.formatLong(matchupRosters.matchup.playtime))),
-      body: new ListView(
-          children: [
-        new Text(matchupRosters.matchup.location)
-      ]..addAll(matchupRosters.matchup.teams.map((t) => new Column(
-              children: [new Text(t.name)]..addAll(
-                  matchupRosters.rosters[t.id]?.map((p) => new PlayerListElement(p)) ??
+      body: new Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: new ListView(
+              children: [
+            new Text(matchupRosters.tournament.location),
+            new Text(matchupRosters.matchup.location)
+          ]..addAll(matchupRosters.matchup.teams.map((t) => new Column(
+                  children: [new Text(t.name)]..addAll(matchupRosters
+                          .rosters[t.id]
+                          ?.map((p) => new PlayerListElement(p)) ??
                       [
                         new Text("Roster Not Available",
                             style: const TextStyle(color: Colors.red))
-                      ]))))));
+                      ])))))));
 }

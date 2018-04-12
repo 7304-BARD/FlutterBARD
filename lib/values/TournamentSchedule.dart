@@ -38,8 +38,8 @@ class TournamentSchedule {
 
   Iterable<DateTime> get flatPlaytimes => matchups.map((m) => m.playtime);
 
-  Iterable<MatchupRosters> get matchupRosters =>
-      matchups.map((m) => new MatchupRosters(m, rosters));
+  Iterable<MatchupRosters> get matchupRosters => matchups.map((m) =>
+      new MatchupRosters(matchup: m, rosters: rosters, tournament: tournament));
 
   Map<String, dynamic> toMap() => {
         'tournament': tournament.toMap(),
@@ -62,10 +62,14 @@ class TournamentSchedule {
 
 @immutable
 class MatchupRosters extends Comparable<MatchupRosters> {
+  final Tournament tournament;
   final Matchup matchup;
   final Map<String, List<Player>> rosters;
 
-  MatchupRosters(this.matchup, this.rosters);
+  MatchupRosters(
+      {@required this.matchup,
+      @required this.rosters,
+      @required this.tournament});
 
   int compareTo(MatchupRosters m) => matchup.compareTo(m.matchup);
 }
