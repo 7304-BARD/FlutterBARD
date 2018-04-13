@@ -27,12 +27,13 @@ class WatchlistState extends State<Watchlist> {
   }
 
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: const Text("My Watchlist")),
-      floatingActionButton: new FloatingActionButton(
-        child: const Icon(Icons.search),
-        onPressed: tapNav(
-            (BuildContext con) => const Search(), con, () => refreshPlayers()),
-      ),
+      appBar: new AppBar(title: const Text("My Watchlist"), actions: [
+        new IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: tapNav((BuildContext con) => const Search(), con,
+              () => refreshPlayers()),
+        )
+      ]),
       body: new ListView(
           children: range(players.length).map(_draggablePlayerLE).toList()
             ..add(_dragTarget(new Container(height: 30.0), players.length))));
