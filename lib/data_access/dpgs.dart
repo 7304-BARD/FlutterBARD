@@ -83,7 +83,13 @@ Matchup _getMatchupForRows(DateTime day, Element game, Element teams) =>
     new Matchup(
         gameid: game.children[0].children[0].text,
         playtime: Dates.parsePGTime(day, game.children[0].children[1].text),
-        location: game.children[1].text.split(new RegExp(r'\s+')).join(' '),
+        location: game.children[1].children[0].nodes
+            .where((n) => !(n.attributes['id']?.contains('cleatrule') ?? false))
+            .map((n) => n.text)
+            .join()
+            .split(new RegExp(r'\s+'))
+            .join(' ')
+            .trim(),
         teams: teams
             .querySelectorAll('a[href*="Tournaments/Teams"]')
             .map(_teamFromElement)
