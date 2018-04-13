@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   HomePage(this.user);
 
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("BARD"), actions: [
+      appBar: new AppBar(title: new Text("Wreck Cards"), actions: [
         new IconButton(
             icon: new Icon(Icons.lock),
             onPressed: () async {
