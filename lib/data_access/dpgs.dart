@@ -83,6 +83,9 @@ Matchup _getMatchupForRows(DateTime day, Element game, Element teams) =>
     new Matchup(
         gameid: game.children[0].children[0].text,
         playtime: Dates.parsePGTime(day, game.children[0].children[1].text),
+        maplink: game
+            .querySelector('a[href*="maps.google.com"]')
+            ?.attributes['href'],
         location: game.children[1].children[0].nodes
             .where((n) => !(n.attributes['id']?.contains('cleatrule') ?? false))
             .map((n) => n.text)

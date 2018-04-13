@@ -5,6 +5,7 @@ import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DayPlanner extends StatefulWidget {
   final List<TournamentSchedule> scheds;
@@ -114,7 +115,14 @@ class RosterListing extends StatelessWidget {
 
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(
-          title: new Text(Dates.formatLong(matchupRosters.matchup.playtime))),
+          title: new Text(Dates.formatLong(matchupRosters.matchup.playtime)),
+          actions: matchupRosters.matchup.maplink == null
+              ? []
+              : [
+                  new IconButton(
+                      icon: const Icon(Icons.map),
+                      onPressed: () => launch(matchupRosters.matchup.maplink))
+                ]),
       body: new Padding(
           padding: const EdgeInsets.all(8.0),
           child: new ListView(
