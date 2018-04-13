@@ -23,6 +23,7 @@ class Player implements Comparable<Player> {
   String teamFall;
   String photoUrl;
   String commitment;
+  String commitmentLogoUrl;
   bool populated; // whether non-mandatory fields have been populated
   bool watchlist; // may be null, see Player.isWatched()
   int watchlistRank; // user-specified for watchlist ordering
@@ -57,6 +58,10 @@ class Player implements Comparable<Player> {
     photoUrl = html
         .querySelector("#ContentPlaceHolder1_Bio1_imgMainPlayerImage")
         .attributes['src'];
+    final logo = html.querySelector('img[id*="4yearCollegeLogo"]');
+    commitmentLogoUrl = logo == null
+        ? null
+        : 'https://www.perfectgame.org/' + logo.attributes['src'];
 
     // We don't have access to player commitments on some players.
     commitment =
@@ -110,6 +115,7 @@ class Player implements Comparable<Player> {
     teamSummer = kv['teamSummer'];
     teamFall = kv['teamFall'];
     photoUrl = kv['photoUrl'];
+    commitmentLogoUrl = kv['commitmentLogoUrl'];
     commitment = kv['commitment'];
     populated = true;
   }
@@ -134,6 +140,7 @@ class Player implements Comparable<Player> {
         "teamFall": teamFall,
         "photoUrl": photoUrl,
         "commitment": commitment,
+        "commitmentLogoUrl": commitmentLogoUrl,
       };
 
   static void addIfNonNull(

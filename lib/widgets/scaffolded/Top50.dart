@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/CheckedSetState.dart';
@@ -28,6 +29,8 @@ class Top50State extends CheckedSetState<Top50> {
     setState(() {
       players = p.toList();
     });
+    await Future.wait(players.map((p) => p.populateAsync()));
+    setState(() {});
   }
 
   initState() {

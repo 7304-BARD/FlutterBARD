@@ -20,6 +20,8 @@ class WatchlistState extends CheckedSetState<Watchlist> {
   void refreshPlayers() async {
     players = await FirebaseAccess.getWatchlistPlayers();
     setState(() {});
+    await Future.wait(players.map((p) => p.populateAsync()));
+    setState(() {});
   }
 
   void initState() {

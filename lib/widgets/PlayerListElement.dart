@@ -27,10 +27,14 @@ class PlayerListElement extends StatelessWidget {
             ),
           ),
           new Text(player.pos),
+          player.commitmentLogoUrl == null
+              ? null
+              : new Image.network(player.commitmentLogoUrl,
+                  width: 50.0, height: 30.0),
           new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Text(player.year),
           ),
-        ],
+        ].where((w) => w != null).toList(),
       ));
 }
