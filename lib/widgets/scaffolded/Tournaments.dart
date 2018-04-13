@@ -3,6 +3,7 @@ import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/TournamentListElement.dart';
@@ -13,7 +14,7 @@ class Tournaments extends StatefulWidget {
   const Tournaments();
 }
 
-class TournamentsState extends State<Tournaments> {
+class TournamentsState extends CheckedSetState<Tournaments> {
   List<Tournament> tournaments = [];
 
   initState() {
@@ -55,7 +56,7 @@ class TournamentTeamListing extends StatefulWidget {
   createState() => new TournamentTeamListingState();
 }
 
-class TournamentTeamListingState extends State<TournamentTeamListing> {
+class TournamentTeamListingState extends CheckedSetState<TournamentTeamListing> {
   List<Team> teams = [];
   initState() {
     super.initState();
@@ -80,7 +81,7 @@ class TeamRosterListing extends StatefulWidget {
   createState() => new TeamRosterListingState();
 }
 
-class TeamRosterListingState extends State<TeamRosterListing> {
+class TeamRosterListingState extends CheckedSetState<TeamRosterListing> {
   List<Player> players = [];
   List<DateTime> playtimes = [];
 

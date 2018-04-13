@@ -1,5 +1,6 @@
 import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,7 @@ class Search extends StatefulWidget {
   State<StatefulWidget> createState() => new SearchState();
 }
 
-class SearchState extends State<Search> {
+class SearchState extends CheckedSetState<Search> {
   List<Player> players = [];
 
   Widget build(BuildContext con) => new Scaffold(

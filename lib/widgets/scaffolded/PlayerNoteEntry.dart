@@ -1,5 +1,6 @@
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:flutter/material.dart';
 
 class PlayerNoteEntry extends StatefulWidget {
@@ -8,7 +9,7 @@ class PlayerNoteEntry extends StatefulWidget {
   createState() => new PlayerNoteEntryState();
 }
 
-class PlayerNoteEntryState extends State<PlayerNoteEntry> {
+class PlayerNoteEntryState extends CheckedSetState<PlayerNoteEntry> {
   final cont = new TextEditingController();
   Widget build(BuildContext con) => new Scaffold(
       appBar:

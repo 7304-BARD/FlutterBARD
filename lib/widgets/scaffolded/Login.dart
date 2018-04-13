@@ -1,3 +1,4 @@
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/HPButton.dart';
 import 'package:FlutterBARD/widgets/TF.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Register.dart';
@@ -8,7 +9,7 @@ class Login extends StatefulWidget {
   createState() => new LoginState();
 }
 
-class LoginState extends State<Login> {
+class LoginState extends CheckedSetState<Login> {
   final emailCon = new TextEditingController();
   final passCon = new TextEditingController();
 

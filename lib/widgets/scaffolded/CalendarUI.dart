@@ -5,6 +5,7 @@ import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/DayPlanner.dart';
 
@@ -95,7 +96,7 @@ class MonthGrid extends StatelessWidget {
           (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))));
 }
 
-class CalendarUIState extends State<CalendarUI> {
+class CalendarUIState extends CheckedSetState<CalendarUI> {
   DateTime month;
   List<TournamentSchedule> scheds = [];
   List<Player> watchlist = [];

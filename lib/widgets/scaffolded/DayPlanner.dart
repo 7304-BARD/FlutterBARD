@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,7 @@ class DayPlanner extends StatefulWidget {
   createState() => new DayPlannerState(day);
 }
 
-class DayPlannerState extends State<DayPlanner> {
+class DayPlannerState extends CheckedSetState<DayPlanner> {
   DateTime day;
   DayPlannerState(this.day);
 

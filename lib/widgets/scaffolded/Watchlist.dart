@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:FlutterBARD/misc.dart';
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Search.dart';
@@ -13,7 +14,7 @@ class Watchlist extends StatefulWidget {
   State<StatefulWidget> createState() => new WatchlistState();
 }
 
-class WatchlistState extends State<Watchlist> {
+class WatchlistState extends CheckedSetState<Watchlist> {
   List<Player> players = [];
 
   void refreshPlayers() async {

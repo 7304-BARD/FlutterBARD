@@ -1,3 +1,4 @@
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/HPButton.dart';
 import 'package:FlutterBARD/widgets/TF.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +8,7 @@ class Register extends StatefulWidget {
   createState() => new RegisterState();
 }
 
-class RegisterState extends State<Register> {
+class RegisterState extends CheckedSetState<Register> {
   final nameCon = new TextEditingController();
   final emailCon = new TextEditingController();
   final passCon = new TextEditingController();

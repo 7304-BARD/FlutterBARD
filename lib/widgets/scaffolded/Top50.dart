@@ -1,5 +1,6 @@
 import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class Top50 extends StatefulWidget {
   State<StatefulWidget> createState() => new Top50State();
 }
 
-class Top50State extends State<Top50> {
+class Top50State extends CheckedSetState<Top50> {
   static final int yearNow = new DateTime.now().year;
   int year = new DateTime.now().year;
   List<int> _years = [yearNow];

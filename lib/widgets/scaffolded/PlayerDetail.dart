@@ -1,5 +1,6 @@
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/PlayerNoteEntry.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class PlayerDetail extends StatefulWidget {
   State<StatefulWidget> createState() => new PlayerDetailState();
 }
 
-class PlayerDetailState extends State<PlayerDetail> {
+class PlayerDetailState extends CheckedSetState<PlayerDetail> {
   List<String> notes = [];
 
   initState() {
