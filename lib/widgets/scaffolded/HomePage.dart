@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
             })
       ]),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
-        new HPNavButton("My Calendar",
+        new HPNavButton("Event Calendar",
             (BuildContext con) => new CalendarUI(new DateTime.now())),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
         new HPNavButton(
