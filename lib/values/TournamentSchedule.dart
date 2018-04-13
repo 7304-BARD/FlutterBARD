@@ -28,13 +28,13 @@ class TournamentSchedule {
   Set<Team> get teams =>
       new Set.from(matchups.map((m) => m.teams).expand((l) => l));
 
-  Iterable<DateTime> get dates =>
-      tournament.dates.length > 7 ? [] : tournament.dates;
+  Iterable<DateTime> get dates => matchups.map((m) => m.playtime).toSet();
 
   bool playerIsPlaying(Player p) => playtimesForPlayer(p).isNotEmpty;
 
   bool get hasFullRosters =>
-      teams.isNotEmpty && rosters.values.every((r) => r.isNotEmpty);
+      teams.isNotEmpty &&
+      teams.every((t) => rosters[t.id]?.isNotEmpty ?? false);
 
   Iterable<DateTime> get flatPlaytimes => matchups.map((m) => m.playtime);
 
