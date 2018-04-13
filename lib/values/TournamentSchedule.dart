@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 class TournamentSchedule {
   final Tournament tournament;
   final List<Matchup> matchups;
-  final Map<String, List<Player>> rosters;
+  final Map<String, List<Player>> rosters; // key is Team.id
 
   const TournamentSchedule(
       {@required this.tournament,

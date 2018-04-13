@@ -8,10 +8,10 @@ import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
 
 class Player implements Comparable<Player> {
-  String pgid;
-  String name;
-  String year;
-  String pos;
+  String pgid; // mandatory
+  String name; // mandatory
+  String year; // mandatory
+  String pos; // mandatory
   String pos2;
   String age;
   String height;
@@ -23,9 +23,9 @@ class Player implements Comparable<Player> {
   String teamFall;
   String photoUrl;
   String commitment;
-  bool populated;
-  bool watchlist;
-  int watchlistRank;
+  bool populated; // whether non-mandatory fields have been populated
+  bool watchlist; // may be null, see Player.isWatched()
+  int watchlistRank; // user-specified for watchlist ordering
 
   Player(this.pgid, Document html) {
     populate(html);
@@ -66,6 +66,7 @@ class Player implements Comparable<Player> {
     populated = true;
   }
 
+  // just enough to display in a PlayerListElement, and to fetch more later
   Player.unpopulated(
       {@required this.pgid,
       @required this.name,
@@ -135,11 +136,12 @@ class Player implements Comparable<Player> {
         "commitment": commitment,
       };
 
-  void addIfNonNull(
+  static void addIfNonNull(
       List<Tuple2<String, String>> list, String key, String value) {
     if (value != null) list.add(new Tuple2(key, value));
   }
 
+  // Used for displays. Keys should be user-friendly, not identifiers.
   List<Tuple2<String, String>> detailMap() {
     var details = new List<Tuple2<String, String>>();
     addIfNonNull(details, "ID", pgid);
@@ -164,6 +166,8 @@ class Player implements Comparable<Player> {
     return watchlist;
   }
 
+  // watchlistRank may be null, as for unwatched players.
+  // We order such players last.
   int compareTo(Player p) => watchlistRank == null
       ? 1
       : p.watchlistRank == null ? -1 : watchlistRank.compareTo(p.watchlistRank);

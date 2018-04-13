@@ -5,31 +5,31 @@ import 'package:flutter/material.dart';
 
 void nop() {}
 
-class PlayerListElement extends StatefulWidget {
+// For Player data in a list.
+// Responds to a tap by pushing a new PlayerDetail.
+class PlayerListElement extends StatelessWidget {
   final Player player;
-  final Function onDismissed;
+  final Function
+      onDismissed; // optional callback invoked when the PlayerDetail is popped.
 
   const PlayerListElement(this.player, [this.onDismissed = nop]);
-  State<StatefulWidget> createState() => new PlayerListElementState();
-}
 
-class PlayerListElementState extends State<PlayerListElement> {
   Widget build(BuildContext con) => new TapNav(
-      builder: (BuildContext con) => new PlayerDetail(widget.player),
-      onDismissed: (widget.onDismissed),
+      builder: (BuildContext con) => new PlayerDetail(player),
+      onDismissed: (onDismissed),
       child: new Row(
         children: [
           new Expanded(
             child: new Padding(
               padding: const EdgeInsets.all(8.0),
-              child: new Text(widget.player.name,
+              child: new Text(player.name,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
-          new Text(widget.player.pos),
+          new Text(player.pos),
           new Padding(
             padding: const EdgeInsets.all(8.0),
-            child: new Text(widget.player.year),
+            child: new Text(player.year),
           ),
         ],
       ));

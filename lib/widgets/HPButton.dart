@@ -1,6 +1,7 @@
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:flutter/material.dart';
 
+// If all buttons were HPButtons, all buttons would have consistent styling.
 class HPButton extends StatelessWidget {
   final String label;
   final Function handler;
@@ -16,6 +17,8 @@ class HPButton extends StatelessWidget {
       ));
 }
 
+// HPButton helper for navigating to a new route.
+// Takes a WidgetBuilder instead of a generic Function.
 class HPNavButton extends StatelessWidget {
   final String label;
   final WidgetBuilder builder;
