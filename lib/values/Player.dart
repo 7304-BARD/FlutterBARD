@@ -41,11 +41,13 @@ class Player implements Comparable<Player> {
   static String _textOrById(Document html, String id, [String def]) =>
       html.getElementById(id)?.text ?? def;
 
-  static String _attrOrNull(Element e, String attr) =>
-      e == null ? null : e.attributes[attr];
+  static R _nullOrTransform<T, R>(T o, R f(T)) => o == null ? null : f(o);
 
-  static String _srcOrSelect(Document html, String sel) =>
-      _attrOrNull(html.querySelector(sel), 'src');
+  static String _nullOrAttr(Element e, String attr) =>
+      _nullOrTransform(e, (e) => e.attributes[attr]);
+
+  static String _selectNullOrSrc(Document html, String sel) =>
+      _nullOrAttr(html.querySelector(sel), 'src');
 
   populate(Document html) {
     name = _textOrById(html, "ContentPlaceHolder1_Bio1_lblName", "");
@@ -62,8 +64,10 @@ class Player implements Comparable<Player> {
     teamFall = _textOrById(html, "ContentPlaceHolder1_Bio1_lblFallTeam");
 
     photoUrl =
-        _srcOrSelect(html, "#ContentPlaceHolder1_Bio1_imgMainPlayerImage");
-    commitmentLogoUrl = _srcOrSelect(html, 'img[id*="4yearCollegeLogo"]');
+        _selectNullOrSrc(html, "#ContentPlaceHolder1_Bio1_imgMainPlayerImage");
+    commitmentLogoUrl = _nullOrTransform(
+        _selectNullOrSrc(html, 'img[id*="4yearCollegeLogo"]'),
+        (s) => 'https://www.perfectgame.org/' + s);
 
     // We don't have access to player commitments on some players.
     commitment =
