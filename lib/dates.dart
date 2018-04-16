@@ -84,6 +84,13 @@ abstract class Dates {
     'Sat'
   ];
 
+  static String getCurrentMonth() {
+    final index = new DateTime.now().month - 1;
+    return months[index];
+  }
+
+  static String getCurrentYear() => new DateTime.now().year.toString();
+
   static int parseShortMonth(String m) => monthAbbrevs.indexOf(m) + 1;
   static DateTime monthStartDate(DateTime m) => new DateTime(m.year, m.month);
 
