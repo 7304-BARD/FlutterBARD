@@ -1,39 +1,28 @@
+import 'dart:async';
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/dpgs.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/Tournament.dart';
-import 'package:FlutterBARD/widgets/CheckedSetState.dart';
+import 'package:FlutterBARD/widgets/Loader.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/TournamentListElement.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
-class Tournaments extends StatefulWidget {
-  State<StatefulWidget> createState() => new TournamentsState();
-  const Tournaments();
-}
-
-class TournamentsState extends CheckedSetState<Tournaments> {
-  List<Tournament> tournaments = [];
-
-  initState() {
-    super.initState();
-    dpgsFetchTournamentsData().then((t) {
-      setState(() {
-        tournaments = new List.unmodifiable(t);
-      });
-    });
-  }
-
-  Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: const Text("Tournaments")),
-      body: new ListView(
-          children: new List.unmodifiable(tournaments.map((t) =>
-              new TournamentListElement(
-                  t,
-                  tapNav((BuildContext con) => new TournamentTeamListing(t),
-                      con))))));
+class Tournaments extends StatelessWidget {
+  Widget build(BuildContext con) => new LoaderScaffold(
+        title: "Tournaments",
+        initState: () async => await dpgsFetchTournamentsData(),
+        renderSuccess: ({data}) => new ListView(
+            children: (data as Iterable<Tournament>)
+                .map((t) => new TournamentListElement(
+                    t,
+                    tapNav((BuildContext con) => new TournamentTeamListing(t),
+                        con)))
+                .toList()),
+      );
 }
 
 class TeamListElement extends StatelessWidget {
@@ -49,61 +38,42 @@ class TeamListElement extends StatelessWidget {
       builder: (BuildContext con) => new TeamRosterListing(team, tournament));
 }
 
-class TournamentTeamListing extends StatefulWidget {
+class TournamentTeamListing extends StatelessWidget {
   final Tournament tournament;
   const TournamentTeamListing(this.tournament);
 
-  createState() => new TournamentTeamListingState();
+  build(BuildContext con) => new LoaderScaffold(
+        title: tournament.title,
+        initState: () async => dpgsFetchTournamentTeams(tournament),
+        renderSuccess: ({data}) => new ListView(
+            children: (data as List<Team>)
+                .map((t) => new TeamListElement(t, tournament))
+                .toList()),
+      );
 }
 
-class TournamentTeamListingState extends CheckedSetState<TournamentTeamListing> {
-  List<Team> teams = [];
-  initState() {
-    super.initState();
-    dpgsFetchTournamentTeams(widget.tournament).then((l) {
-      setState(() => teams = l);
-    });
-  }
-
-  build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text(widget.tournament.title)),
-      body: new ListView(
-          children: teams
-              .map((t) => new TeamListElement(t, widget.tournament))
-              .toList()));
-}
-
-class TeamRosterListing extends StatefulWidget {
+class TeamRosterListing extends StatelessWidget {
   final Team team;
   final Tournament tournament;
   const TeamRosterListing(this.team, this.tournament);
 
-  createState() => new TeamRosterListingState();
-}
-
-class TeamRosterListingState extends CheckedSetState<TeamRosterListing> {
-  List<Player> players = [];
-  List<DateTime> playtimes = [];
-
-  void fetchDoc() async {
-    final doc = await dpgsFetchTournamentTeamPage(widget.team);
-    playtimes = dpgsGetTournamentTeamPlaytimes(doc).toList();
-    setState(() {
-      players = dpgsGetTournamentTeamRoster(doc).toList();
-    });
+  Future<Tuple2<List<Player>, List<DateTime>>> fetchDoc() async {
+    final doc = await dpgsFetchTournamentTeamPage(team);
+    final players = dpgsGetTournamentTeamRoster(doc).toList();
+    final playtimes = dpgsGetTournamentTeamPlaytimes(doc).toList();
+    return new Tuple2<List<Player>, List<DateTime>>(players, playtimes);
   }
 
-  initState() {
-    super.initState();
-    fetchDoc();
-  }
-
-  build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text(widget.team.name)),
-      body: new ListView(
+  static Widget _view(Tuple2<List<Player>, List<DateTime>> data) =>
+      new ListView(
           children: []
-            ..addAll(playtimes.map((p) => new Padding(
+            ..addAll(data.item2.map((p) => new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new Text(Dates.formatLong(p)))))
-            ..addAll(players.map((p) => new PlayerListElement(p)))));
+            ..addAll(data.item1.map((p) => new PlayerListElement(p))));
+
+  build(BuildContext con) => new LoaderScaffold(
+      title: team.name,
+      initState: fetchDoc,
+      renderSuccess: ({data}) => _view(data));
 }
