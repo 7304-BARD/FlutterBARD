@@ -152,7 +152,6 @@ class Player implements Comparable<Player> {
   // Used for displays. Keys should be user-friendly, not identifiers.
   List<Tuple2<String, String>> detailMap() {
     var details = new List<Tuple2<String, String>>();
-    addIfNonNull(details, "ID", pgid);
     addIfNonNull(details, "Name", name);
     addIfNonNull(details, "Grad year", year);
     addIfNonNull(details, "Primary position", pos);
