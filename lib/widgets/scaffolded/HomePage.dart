@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             (BuildContext con) => new CalendarUI(new DateTime.now())),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
         new HPNavButton(
-            "Top Players by Year", (BuildContext con) => new Top50()),
+            "Top Players by Year", (BuildContext con) => new Top50Loader()),
         new HPNavButton("Tournaments", (BuildContext con) => new Tournaments()),
       ]));
 }
