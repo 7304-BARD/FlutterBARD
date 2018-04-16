@@ -8,21 +8,36 @@ import 'package:FlutterBARD/widgets/Loader.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/TournamentListElement.dart';
+import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
-class Tournaments extends StatelessWidget {
+class Tournaments extends StatefulWidget {
+  State<StatefulWidget> createState() => new TournamentsState();
+}
+
+class TournamentsState extends CheckedSetState<Tournaments> {
+  Map<String, String> _years;
+  final Map<String, String> _months = dpgsGetTournamentFilterMonths();
+  Map<String, String> _postParameters;
+
+  initState() async
+  {
+    super.initState();
+    _years = await dpgsGetTournamentFilterYears();
+  }
+
   Widget build(BuildContext con) => new LoaderScaffold(
-        title: "Tournaments",
-        initState: () async => await dpgsFetchTournamentsData(),
-        renderSuccess: ({data}) => new ListView(
-            children: (data as Iterable<Tournament>)
-                .map((t) => new TournamentListElement(
-                    t,
-                    tapNav((BuildContext con) => new TournamentTeamListing(t),
-                        con)))
-                .toList()),
-      );
+    title: "Tournaments",
+    initState: () async => await dpgsFetchTournamentsData(),
+    renderSuccess: ({data}) => new ListView(
+        children: (data as Iterable<Tournament>)
+            .map((t) => new TournamentListElement(
+            t,
+            tapNav((BuildContext con) => new TournamentTeamListing(t),
+                con)))
+            .toList()),
+  );
 }
 
 class TeamListElement extends StatelessWidget {

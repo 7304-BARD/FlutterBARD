@@ -221,3 +221,42 @@ Tournament _getEventData(Element ebox) {
       date:
           ebox.querySelector('div[style="font-weight:bold; float:left"]').text);
 }
+
+Future<Map<String, String>> dpgsGetTournamentFilterYears() async
+{
+  final tournamentDocument = await _fetchTournamentsPage();
+  return dpgsScrapeTournamentOptionTextValues(tournamentDocument, "#ContentPlaceHolder1_ddlYear");
+}
+
+// No need to actually scrape this.
+Map<String, String> dpgsGetTournamentFilterMonths() =>
+{
+  "January" :  "ctl00\$ContentPlaceHolder1\$lbFirst",
+  "February" :  "ctl00\$ContentPlaceHolder1\$lbSecond",
+  "March" :  "ctl00\$ContentPlaceHolder1\$lbThird",
+  "April" :  "ctl00\$ContentPlaceHolder1\$lbFourth",
+  "May" :  "ctl00\$ContentPlaceHolder1\$lbFifth",
+  "June" :  "ctl00\$ContentPlaceHolder1\$lbSixth",
+  "July" :  "ctl00\$ContentPlaceHolder1\$lbSeventh",
+  "August" :  "ctl00\$ContentPlaceHolder1\$lbEighth",
+  "September" :  "ctl00\$ContentPlaceHolder1\$lbNinth",
+  "October" :  "ctl00\$ContentPlaceHolder1\$lbTenth",
+  "November" :  "ctl00\$ContentPlaceHolder1\$lbEleventh",
+  "December" : "ctl00\$ContentPlaceHolder1\$lbTwelveth"
+};
+
+// Can be used to scrape years, divisions, states, ect for filtering tournaments.
+Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id)
+{
+  Map<String, String> output = new Map<String, String>();
+  doc.querySelector(id)?.querySelectorAll("option")?.forEach((option) {
+    final text = option.text ?? "";
+    final value = option.attributes["value"] ?? "";
+
+    if (text.isNotEmpty && value.isNotEmpty) {
+      output[text] = value;
+    }
+  });
+
+  return output;
+}
