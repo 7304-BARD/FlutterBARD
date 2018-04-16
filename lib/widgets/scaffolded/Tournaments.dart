@@ -23,21 +23,26 @@ class TournamentsState extends CheckedSetState<Tournaments> {
 
   initState() async
   {
-    super.initState();
+    //super.initState();
     _years = await dpgsGetTournamentFilterYears();
   }
+
+  DropdownMenuItem getDropdownItem(String text) =>
+      new DropdownMenuItem(child: new Text(text));
+
+  List<DropdownMenuItem> getDropdownList(Iterable<String> keys) =>
+    keys.map(getDropdownItem).toList();
 
   Widget build(BuildContext con) => new LoaderScaffold(
     title: "Tournaments",
     initState: () async => await dpgsFetchTournamentsData(),
-    renderSuccess: ({data}) => new ListView(
+    renderSuccess: ({data}) => new Column(children: <Widget>[
+      new DropdownButton(items: getDropdownList(_years.keys), onChanged: null),
+      new DropdownButton(items: getDropdownList(_months.keys), onChanged: null),
+      new ListView(
         children: (data as Iterable<Tournament>)
-            .map((t) => new TournamentListElement(
-            t,
-            tapNav((BuildContext con) => new TournamentTeamListing(t),
-                con)))
-            .toList()),
-  );
+          .map((t) => new TournamentListElement(t, tapNav((BuildContext con) =>
+            new TournamentTeamListing(t), con))).toList())]));
 }
 
 class TeamListElement extends StatelessWidget {
