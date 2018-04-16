@@ -38,35 +38,36 @@ class Player implements Comparable<Player> {
     await pc.getPlayerMap(pgid).then((m) => populateFromMap(m));
   }
 
+  static String _textOrById(Document html, String id, [String def]) =>
+      html.getElementById(id)?.text ?? def;
+
+  static String _attrOrNull(Element e, String attr) =>
+      e == null ? null : e.attributes[attr];
+
+  static String _srcOrSelect(Document html, String sel) =>
+      _attrOrNull(html.querySelector(sel), 'src');
+
   populate(Document html) {
-    name = html.querySelector("#ContentPlaceHolder1_Bio1_lblName").text;
-    year = html.querySelector("#ContentPlaceHolder1_Bio1_lblGradYear").text;
-    pos =
-        html.querySelector("#ContentPlaceHolder1_Bio1_lblPrimaryPosition").text;
-    pos2 =
-        html.querySelector("#ContentPlaceHolder1_Bio1_lblOtherPositions").text;
-    age = html.querySelector("#ContentPlaceHolder1_Bio1_lblAgeNow").text;
-    height = html.querySelector("#ContentPlaceHolder1_Bio1_lblHeight").text;
-    weight = html.querySelector("#ContentPlaceHolder1_Bio1_lblWeight").text;
-    bats_throws =
-        html.querySelector("#ContentPlaceHolder1_Bio1_lblBatsThrows").text;
-    highschool = html.querySelector("#ContentPlaceHolder1_Bio1_lblHS").text;
-    town = html.querySelector("#ContentPlaceHolder1_Bio1_lblHomeTown").text;
-    teamSummer =
-        html.querySelector("#ContentPlaceHolder1_Bio1_lblSummerTeam").text;
-    teamFall = html.querySelector("#ContentPlaceHolder1_Bio1_lblFallTeam").text;
-    photoUrl = html
-        .querySelector("#ContentPlaceHolder1_Bio1_imgMainPlayerImage")
-        .attributes['src'];
-    final logo = html.querySelector('img[id*="4yearCollegeLogo"]');
-    commitmentLogoUrl = logo == null
-        ? null
-        : 'https://www.perfectgame.org/' + logo.attributes['src'];
+    name = _textOrById(html, "ContentPlaceHolder1_Bio1_lblName", "");
+    year = _textOrById(html, "ContentPlaceHolder1_Bio1_lblGradYear", "");
+    pos = _textOrById(html, "ContentPlaceHolder1_Bio1_lblPrimaryPosition", "");
+    pos2 = _textOrById(html, "ContentPlaceHolder1_Bio1_lblOtherPositions");
+    age = _textOrById(html, "ContentPlaceHolder1_Bio1_lblAgeNow");
+    height = _textOrById(html, "ContentPlaceHolder1_Bio1_lblHeight");
+    weight = _textOrById(html, "ContentPlaceHolder1_Bio1_lblWeight");
+    bats_throws = _textOrById(html, "ContentPlaceHolder1_Bio1_lblBatsThrows");
+    highschool = _textOrById(html, "ContentPlaceHolder1_Bio1_lblHS");
+    town = _textOrById(html, "ContentPlaceHolder1_Bio1_lblHomeTown");
+    teamSummer = _textOrById(html, "ContentPlaceHolder1_Bio1_lblSummerTeam");
+    teamFall = _textOrById(html, "ContentPlaceHolder1_Bio1_lblFallTeam");
+
+    photoUrl =
+        _srcOrSelect(html, "#ContentPlaceHolder1_Bio1_imgMainPlayerImage");
+    commitmentLogoUrl = _srcOrSelect(html, 'img[id*="4yearCollegeLogo"]');
 
     // We don't have access to player commitments on some players.
     commitment =
-        html.querySelector("#ContentPlaceHolder1_Bio1_hl4yearCommit")?.text ??
-            "";
+        _textOrById(html, "ContentPlaceHolder1_Bio1_hl4yearCommit", "");
 
     populated = true;
   }
