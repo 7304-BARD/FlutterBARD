@@ -96,13 +96,19 @@ class PlayerDetailState extends CheckedSetState<PlayerDetail> {
                             padding: const EdgeInsets.all(8.0),
                             child: widget.player.photoUrl == null
                                 ? new CircularProgressIndicator()
-                                : new GestureDetector(
-                                    onTap: () {
-                                      launch(
-                                          'https://perfectgame.org/Players/Playerprofile.aspx?id=${widget.player.pgid}');
-                                    },
-                                    child: new Image.network(
-                                        widget.player.photoUrl))))
+                                : new Image.network(widget.player.photoUrl))),
+                    new Center(
+                        child: new FlatButton(
+                      child: new Text("[PerfectGame profile]",
+                          style: new TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(con).accentColor,
+                              decoration: TextDecoration.underline)),
+                      onPressed: () {
+                        launch(
+                            'https://perfectgame.org/Players/Playerprofile.aspx?id=${widget.player.pgid}');
+                      },
+                    ))
                   ]
                     ..addAll(
                         widget.player.detailMap().map((p) => new KVText(p)))
