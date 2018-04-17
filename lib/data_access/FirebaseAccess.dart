@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class FirebaseAccess {
-
   // reference to the Firebase root
   static Future<DatabaseReference> _getDBRootRef() async {
     final fbase = FirebaseDatabase.instance;

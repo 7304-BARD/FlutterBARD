@@ -21,37 +21,53 @@ class TournamentsState extends CheckedSetState<Tournaments> {
   final Map<String, String> _months = dpgsGetTournamentFilterMonths();
   String _year = Dates.getCurrentYear();
   String _month = Dates.getCurrentMonth();
-  Map<String, String> _postParameters = dpgsGetDefaultTournamentPostParameters();
+  Map<String, String> _postParameters =
+      dpgsGetDefaultTournamentPostParameters();
   bool _doPost = false;
 
   DropdownMenuItem getDropdownItem(String text) =>
       new DropdownMenuItem(child: new Text(text), value: text);
 
   List<DropdownMenuItem> getDropdownList(Iterable<String> keys) =>
-    keys.map(getDropdownItem).toList();
+      keys.map(getDropdownItem).toList();
 
   Widget build(BuildContext con) => new LoaderScaffold(
-    title: "Tournaments",
-    initState: () async {
-      print("[TournamentsState.build] initState called");
-      _years = _years ?? await dpgsGetTournamentFilterYears();
-      return _doPost ? await dpgsPostTournamentsData(_postParameters) : await dpgsFetchTournamentsData(params: _postParameters);
-    },
-    renderSuccess: ({data}) => new Column(children: <Widget>[
-      new DropdownButton(items: getDropdownList(_years.keys), value: _year, onChanged: (newValue) {
-        _year = newValue;
-      }),
-      new DropdownButton(items: getDropdownList(_months.keys), value: _month, onChanged: (newValue) {
-        setState(() {
-          _month = newValue;
-          _postParameters["__EVENTTARGET"] = _months[newValue];
-          _doPost = true;
-        });
-      }),
-      new Expanded(child:
-        new ListView(children: (data as Iterable<Tournament>).map((t) =>
-          new TournamentListElement(t, tapNav((BuildContext con) =>
-            new TournamentTeamListing(t), con))).toList()))]));
+      title: "Tournaments",
+      initState: () async {
+        print("[TournamentsState.build] initState called");
+        _years = _years ?? await dpgsGetTournamentFilterYears();
+        return _doPost
+            ? await dpgsPostTournamentsData(_postParameters)
+            : await dpgsFetchTournamentsData(params: _postParameters);
+      },
+      renderSuccess: ({data}) => new Column(children: <Widget>[
+            new DropdownButton(
+                items: getDropdownList(_years.keys),
+                value: _year,
+                onChanged: (newValue) {
+                  _year = newValue;
+                }),
+            new DropdownButton(
+                items: getDropdownList(_months.keys),
+                value: _month,
+                onChanged: (newValue) {
+                  setState(() {
+                    _month = newValue;
+                    _postParameters["__EVENTTARGET"] = _months[newValue];
+                    _doPost = true;
+                  });
+                }),
+            new Expanded(
+                child: new ListView(
+                    children: (data as Iterable<Tournament>)
+                        .map((t) => new TournamentListElement(
+                            t,
+                            tapNav(
+                                (BuildContext con) =>
+                                    new TournamentTeamListing(t),
+                                con)))
+                        .toList()))
+          ]));
 }
 
 class TeamListElement extends StatelessWidget {

@@ -82,7 +82,8 @@ Iterable<Element> _getEventBoxes(Document d) =>
 Future<Document> _fetchT50Page(String year) =>
     _fetchPGRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
 
-Future<Iterable<Tournament>> dpgsFetchTournamentsData({Map<String, String> params = null}) async {
+Future<Iterable<Tournament>> dpgsFetchTournamentsData(
+    {Map<String, String> params = null}) async {
   final doc = await _fetchTournamentsPage();
   if (params != null) {
     dpgsScrapeTournamentPostParameters(doc, params);
@@ -90,7 +91,8 @@ Future<Iterable<Tournament>> dpgsFetchTournamentsData({Map<String, String> param
   return _getEventBoxes(doc).map(_getEventData);
 }
 
-Future<Iterable<Tournament>> dpgsPostTournamentsData(Map<String, String> params) async =>
+Future<Iterable<Tournament>> dpgsPostTournamentsData(
+        Map<String, String> params) async =>
     _getEventBoxes(await _postTournamentsPage(params)).map(_getEventData);
 
 Future<Document> dpgsFetchTournamentTeamPage(Team t) =>
@@ -201,13 +203,15 @@ Future<TournamentSchedule> dpgsFetchScheduleForTournament(Tournament t) async {
       tournament: t, rosters: rosters, matchups: matchups);
 }
 
-Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules({Map<String, String> params = null}) async =>
-    Future.wait(
-        (await dpgsFetchTournamentsData(params: params)).map(dpgsFetchScheduleForTournament));
+Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules(
+        {Map<String, String> params = null}) async =>
+    Future.wait((await dpgsFetchTournamentsData(params: params))
+        .map(dpgsFetchScheduleForTournament));
 
-Future<List<TournamentSchedule>> dpgsPostTournamentSchedules(Map<String, String> params) async =>
-    Future.wait(
-        (await dpgsPostTournamentsData(params)).map(dpgsFetchScheduleForTournament));
+Future<List<TournamentSchedule>> dpgsPostTournamentSchedules(
+        Map<String, String> params) async =>
+    Future.wait((await dpgsPostTournamentsData(params))
+        .map(dpgsFetchScheduleForTournament));
 
 Future<Null> dpgsUpdateTournamentSchedules() async =>
     FirebaseAccess.putTournamentSchedules(await dpgsFetchTournamentSchedules());
@@ -253,48 +257,46 @@ Tournament _getEventData(Element ebox) {
           ebox.querySelector('div[style="font-weight:bold; float:left"]').text);
 }
 
-Future<Map<String, String>> dpgsGetTournamentFilterYears() async
-{
+Future<Map<String, String>> dpgsGetTournamentFilterYears() async {
   final tournamentDocument = await _fetchTournamentsPage();
-  return dpgsScrapeTournamentOptionTextValues(tournamentDocument, "#ContentPlaceHolder1_ddlYear");
+  return dpgsScrapeTournamentOptionTextValues(
+      tournamentDocument, "#ContentPlaceHolder1_ddlYear");
 }
 
 // No need to actually scrape this.
-Map<String, String> dpgsGetTournamentFilterMonths() =>
-{
-  "January" :  "ctl00\$ContentPlaceHolder1\$lbFirst",
-  "February" :  "ctl00\$ContentPlaceHolder1\$lbSecond",
-  "March" :  "ctl00\$ContentPlaceHolder1\$lbThird",
-  "April" :  "ctl00\$ContentPlaceHolder1\$lbFourth",
-  "May" :  "ctl00\$ContentPlaceHolder1\$lbFifth",
-  "June" :  "ctl00\$ContentPlaceHolder1\$lbSixth",
-  "July" :  "ctl00\$ContentPlaceHolder1\$lbSeventh",
-  "August" :  "ctl00\$ContentPlaceHolder1\$lbEighth",
-  "September" :  "ctl00\$ContentPlaceHolder1\$lbNinth",
-  "October" :  "ctl00\$ContentPlaceHolder1\$lbTenth",
-  "November" :  "ctl00\$ContentPlaceHolder1\$lbEleventh",
-  "December" : "ctl00\$ContentPlaceHolder1\$lbTwelveth"
-};
+Map<String, String> dpgsGetTournamentFilterMonths() => {
+      "January": "ctl00\$ContentPlaceHolder1\$lbFirst",
+      "February": "ctl00\$ContentPlaceHolder1\$lbSecond",
+      "March": "ctl00\$ContentPlaceHolder1\$lbThird",
+      "April": "ctl00\$ContentPlaceHolder1\$lbFourth",
+      "May": "ctl00\$ContentPlaceHolder1\$lbFifth",
+      "June": "ctl00\$ContentPlaceHolder1\$lbSixth",
+      "July": "ctl00\$ContentPlaceHolder1\$lbSeventh",
+      "August": "ctl00\$ContentPlaceHolder1\$lbEighth",
+      "September": "ctl00\$ContentPlaceHolder1\$lbNinth",
+      "October": "ctl00\$ContentPlaceHolder1\$lbTenth",
+      "November": "ctl00\$ContentPlaceHolder1\$lbEleventh",
+      "December": "ctl00\$ContentPlaceHolder1\$lbTwelveth"
+    };
 
 // No need to actually scrape this.
-Map<String, String> dpgsGetDefaultTournamentPostParameters() =>
-{
-  "__ASYNCPOST" : "false",
-  "__EVENTARGUMENT" : "",
-  "__EVENTTARGET" : "",
-  "__EVENTVALIDATION" : "",
-  "__LASTFOCUS" : "",
-  "__VIEWSTATE" : "",
-  "__VIEWSTATEGENERATOR" : "",
-  "ctl00\$ContentPlaceHolder1\$ddlAgeDivision" : "0",
-  "ctl00\$ContentPlaceHolder1\$ddlState" : "ZZ",
-  "ctl00\$ContentPlaceHolder1\$ddlYear" : "2018",
-  "ctl00\$ContentPlaceHolder1\$rblTournaments" : "1,2,3"
-};
+Map<String, String> dpgsGetDefaultTournamentPostParameters() => {
+      "__ASYNCPOST": "false",
+      "__EVENTARGUMENT": "",
+      "__EVENTTARGET": "",
+      "__EVENTVALIDATION": "",
+      "__LASTFOCUS": "",
+      "__VIEWSTATE": "",
+      "__VIEWSTATEGENERATOR": "",
+      "ctl00\$ContentPlaceHolder1\$ddlAgeDivision": "0",
+      "ctl00\$ContentPlaceHolder1\$ddlState": "ZZ",
+      "ctl00\$ContentPlaceHolder1\$ddlYear": "2018",
+      "ctl00\$ContentPlaceHolder1\$rblTournaments": "1,2,3"
+    };
 
 // Can be used to scrape years, divisions, states, ect for filtering tournaments.
-Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id)
-{
+Map<String, String> dpgsScrapeTournamentOptionTextValues(
+    Document doc, String id) {
   Map<String, String> output = new Map<String, String>();
   doc.querySelector(id)?.querySelectorAll("option")?.forEach((option) {
     final text = option.text ?? "";
@@ -309,23 +311,25 @@ Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id
 }
 
 // Unfortunately, we need to pass the postParameters by reference.
-void dpgsScrapeTournamentPostParameters(Document doc, Map<String, String> postParameters)
-{
+void dpgsScrapeTournamentPostParameters(
+    Document doc, Map<String, String> postParameters) {
   // Do NOT get rid of these helper functions!
   // The attributes map can be null, so doing a simple attributes["value"] will cause a crash.
   // The putIfAbsent method returns null for empty strings for some reason.
-  String getAttributeValue(String id)
-  {
+  String getAttributeValue(String id) {
     final attributes = doc.getElementById(id)?.attributes;
     return (attributes != null) ? attributes["value"] ?? "" : "";
   }
 
-  String getSelectedAttributeValue(String id, {String defaultValue = ""})
-  {
-    final attributes = doc.getElementById(id)?.
-      querySelector("option[selected='selected']")?.attributes;
+  String getSelectedAttributeValue(String id, {String defaultValue = ""}) {
+    final attributes = doc
+        .getElementById(id)
+        ?.querySelector("option[selected='selected']")
+        ?.attributes;
 
-    return (attributes != null) ? attributes["value"] ?? defaultValue : defaultValue;
+    return (attributes != null)
+        ? attributes["value"] ?? defaultValue
+        : defaultValue;
   }
 
   postParameters["__EVENTARGUMENT"] = getAttributeValue("__EVENTARGUMENT");
@@ -336,19 +340,20 @@ void dpgsScrapeTournamentPostParameters(Document doc, Map<String, String> postPa
 
   postParameters["__VIEWSTATE"] = getAttributeValue("__VIEWSTATE");
 
-  postParameters["__VIEWSTATEGENERATOR"] = getAttributeValue("__VIEWSTATEGENERATOR");
+  postParameters["__VIEWSTATEGENERATOR"] =
+      getAttributeValue("__VIEWSTATEGENERATOR");
 
   postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] =
-    getSelectedAttributeValue("ContentPlaceHolder1_ddlYear",
-        defaultValue: Dates.getCurrentYear());
+      getSelectedAttributeValue("ContentPlaceHolder1_ddlYear",
+          defaultValue: Dates.getCurrentYear());
 
   // ZZ decodes to all states.
   postParameters["ctl00\$ContentPlaceHolder1\$ddlState"] =
-    getSelectedAttributeValue("ContentPlaceHolder1_ddlState",
-        defaultValue: "ZZ");
+      getSelectedAttributeValue("ContentPlaceHolder1_ddlState",
+          defaultValue: "ZZ");
 
   // 0 decodes to all age divisions.
   postParameters["ctl00\$ContentPlaceHolder1\$ddlAgeDivision"] =
-    getSelectedAttributeValue("ContentPlaceHolder1_ddlAgeDivision",
-        defaultValue: "0");
+      getSelectedAttributeValue("ContentPlaceHolder1_ddlAgeDivision",
+          defaultValue: "0");
 }
