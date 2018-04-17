@@ -24,8 +24,22 @@ Future<Document> _fetchResource(Uri uri) async {
   }
 }
 
+Future<Document> _postResource(Uri uri) async {
+  try {
+    final post = await new HttpClient().postUrl(uri);
+    final response = await post.close();
+    final body = await response.transform(const Utf8Codec().decoder).join();
+    return parse(body);
+  } catch (e) {
+    return _postResource(uri);
+  }
+}
+
 Future<Document> _fetchPGRaw(String res, [Map<String, String> params]) =>
     _fetchResource(new Uri.https('www.perfectgame.org', res, params));
+
+Future<Document> _postPGRaw(String res, Map<String, String> params) =>
+    _postResource(new Uri.https('www.perfectgame.org', res, params));
 
 Iterable<E> _stride<E>(Iterable<E> it, int stride) sync* {
   while (it.isNotEmpty) {
@@ -51,6 +65,11 @@ Future<Document> _performSearch(String q) =>
 Future<Document> _fetchTournamentsPage() =>
     _fetchPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
 
+Future<Document> _postTournamentsPage(Map<String, String> params) {
+  params["Type"] = "Tournaments";
+  return _postPGRaw('Schedule/Default.aspx', params);
+}
+
 Iterable<Element> _getPlayerKeyedTableAnchors(Document d) =>
     d.querySelectorAll('tr a[href*="Playerprofile.aspx"]');
 
@@ -63,8 +82,16 @@ Iterable<Element> _getEventBoxes(Document d) =>
 Future<Document> _fetchT50Page(String year) =>
     _fetchPGRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
 
-Future<Iterable<Tournament>> dpgsFetchTournamentsData() async =>
-    _getEventBoxes(await _fetchTournamentsPage()).map(_getEventData);
+Future<Iterable<Tournament>> dpgsFetchTournamentsData({Map<String, String> params = null}) async {
+  final doc = await _fetchTournamentsPage();
+  if (params != null) {
+    dpgsScrapeTournamentPostParameters(doc, params);
+  }
+  return _getEventBoxes(doc).map(_getEventData);
+}
+
+Future<Iterable<Tournament>> dpgsPostTournamentsData(Map<String, String> params) async =>
+    _getEventBoxes(await _postTournamentsPage(params)).map(_getEventData);
 
 Future<Document> dpgsFetchTournamentTeamPage(Team t) =>
     _fetchPGRaw('Events/Tournaments/Teams/Default.aspx', {'team': t.id});
@@ -174,9 +201,13 @@ Future<TournamentSchedule> dpgsFetchScheduleForTournament(Tournament t) async {
       tournament: t, rosters: rosters, matchups: matchups);
 }
 
-Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules() async =>
+Future<List<TournamentSchedule>> dpgsFetchTournamentSchedules({Map<String, String> params = null}) async =>
     Future.wait(
-        (await dpgsFetchTournamentsData()).map(dpgsFetchScheduleForTournament));
+        (await dpgsFetchTournamentsData(params: params)).map(dpgsFetchScheduleForTournament));
+
+Future<List<TournamentSchedule>> dpgsPostTournamentSchedules(Map<String, String> params) async =>
+    Future.wait(
+        (await dpgsPostTournamentsData(params)).map(dpgsFetchScheduleForTournament));
 
 Future<Null> dpgsUpdateTournamentSchedules() async =>
     FirebaseAccess.putTournamentSchedules(await dpgsFetchTournamentSchedules());
@@ -277,41 +308,47 @@ Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id
   return output;
 }
 
-Map<String, String> dpgsScrapeTournamentPostParameters(Document doc)
+// Unfortunately, we need to pass the postParameters by reference.
+void dpgsScrapeTournamentPostParameters(Document doc, Map<String, String> postParameters)
 {
-  Map<String, String> postParameters = dpgsGetDefaultTournamentPostParameters();
+  // Do NOT get rid of these helper functions!
+  // The attributes map can be null, so doing a simple attributes["value"] will cause a crash.
+  // The putIfAbsent method returns null for empty strings for some reason.
+  String getAttributeValue(String id)
+  {
+    final attributes = doc.getElementById(id)?.attributes;
+    return (attributes != null) ? attributes["value"] ?? "" : "";
+  }
 
-  postParameters["__EVENTARGUMENT"] =
-      doc.getElementById("__EVENTARGUMENT")?.attributes["value"] ?? "";
+  String getSelectedAttributeValue(String id, {String defaultValue = ""})
+  {
+    final attributes = doc.getElementById(id)?.
+      querySelector("option[selected='selected']")?.attributes;
 
-  postParameters["__EVENTTARGET"] =
-      doc.getElementById("__EVENTTARGET")?.attributes["value"] ?? "";
+    return (attributes != null) ? attributes["value"] ?? defaultValue : defaultValue;
+  }
 
-  postParameters["__EVENTVALIDATION"] =
-      doc.getElementById("__EVENTVALIDATION")?.attributes["value"] ?? "";
+  postParameters["__EVENTARGUMENT"] = getAttributeValue("__EVENTARGUMENT");
 
-  postParameters["__VIEWSTATE"] =
-      doc.getElementById("__VIEWSTATE")?.attributes["value"] ?? "";
+  postParameters["__EVENTTARGET"] = getAttributeValue("__EVENTTARGET");
 
-  postParameters["__VIEWSTATEGENERATOR"] =
-      doc.getElementById("__VIEWSTATEGENERATOR")?.attributes["value"] ?? "";
+  postParameters["__EVENTVALIDATION"] = getAttributeValue("__EVENTVALIDATION");
+
+  postParameters["__VIEWSTATE"] = getAttributeValue("__VIEWSTATE");
+
+  postParameters["__VIEWSTATEGENERATOR"] = getAttributeValue("__VIEWSTATEGENERATOR");
 
   postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] =
-      doc.getElementById("ContentPlaceHolder1_ddlYear")?.
-        querySelector("option[selected='selected']")?.
-        attributes["value"] ?? Dates.getCurrentYear();
+    getSelectedAttributeValue("ContentPlaceHolder1_ddlYear",
+        defaultValue: Dates.getCurrentYear());
 
   // ZZ decodes to all states.
   postParameters["ctl00\$ContentPlaceHolder1\$ddlState"] =
-      doc.getElementById("ContentPlaceHolder1_ddlState")?.
-      querySelector("option[selected='selected']")?.
-      attributes["value"] ?? "ZZ";
+    getSelectedAttributeValue("ContentPlaceHolder1_ddlState",
+        defaultValue: "ZZ");
 
   // 0 decodes to all age divisions.
   postParameters["ctl00\$ContentPlaceHolder1\$ddlAgeDivision"] =
-      doc.getElementById("ContentPlaceHolder1_ddlAgeDivision")?.
-      querySelector("option[selected='selected']")?.
-      attributes["value"] ?? "0";
-
-  return postParameters;
+    getSelectedAttributeValue("ContentPlaceHolder1_ddlAgeDivision",
+        defaultValue: "0");
 }
