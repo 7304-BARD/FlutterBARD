@@ -245,6 +245,22 @@ Map<String, String> dpgsGetTournamentFilterMonths() =>
   "December" : "ctl00\$ContentPlaceHolder1\$lbTwelveth"
 };
 
+// No need to actually scrape this.
+Map<String, String> dpgsGetDefaultTournamentPostParameters() =>
+{
+  "__ASYNCPOST" : "false",
+  "__EVENTARGUMENT" : "",
+  "__EVENTTARGET" : "",
+  "__EVENTVALIDATION" : "",
+  "__LASTFOCUS" : "",
+  "__VIEWSTATE" : "",
+  "__VIEWSTATEGENERATOR" : "",
+  "ctl00\$ContentPlaceHolder1\$ddlAgeDivision" : "0",
+  "ctl00\$ContentPlaceHolder1\$ddlState" : "ZZ",
+  "ctl00\$ContentPlaceHolder1\$ddlYear" : "2018",
+  "ctl00\$ContentPlaceHolder1\$rblTournaments" : "1,2,3"
+};
+
 // Can be used to scrape years, divisions, states, ect for filtering tournaments.
 Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id)
 {
@@ -259,4 +275,43 @@ Map<String, String> dpgsScrapeTournamentOptionTextValues(Document doc, String id
   });
 
   return output;
+}
+
+Map<String, String> dpgsScrapeTournamentPostParameters(Document doc)
+{
+  Map<String, String> postParameters = dpgsGetDefaultTournamentPostParameters();
+
+  postParameters["__EVENTARGUMENT"] =
+      doc.getElementById("__EVENTARGUMENT")?.attributes["value"] ?? "";
+
+  postParameters["__EVENTTARGET"] =
+      doc.getElementById("__EVENTTARGET")?.attributes["value"] ?? "";
+
+  postParameters["__EVENTVALIDATION"] =
+      doc.getElementById("__EVENTVALIDATION")?.attributes["value"] ?? "";
+
+  postParameters["__VIEWSTATE"] =
+      doc.getElementById("__VIEWSTATE")?.attributes["value"] ?? "";
+
+  postParameters["__VIEWSTATEGENERATOR"] =
+      doc.getElementById("__VIEWSTATEGENERATOR")?.attributes["value"] ?? "";
+
+  postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] =
+      doc.getElementById("ContentPlaceHolder1_ddlYear")?.
+        querySelector("option[selected='selected']")?.
+        attributes["value"] ?? Dates.getCurrentYear();
+
+  // ZZ decodes to all states.
+  postParameters["ctl00\$ContentPlaceHolder1\$ddlState"] =
+      doc.getElementById("ContentPlaceHolder1_ddlState")?.
+      querySelector("option[selected='selected']")?.
+      attributes["value"] ?? "ZZ";
+
+  // 0 decodes to all age divisions.
+  postParameters["ctl00\$ContentPlaceHolder1\$ddlAgeDivision"] =
+      doc.getElementById("ContentPlaceHolder1_ddlAgeDivision")?.
+      querySelector("option[selected='selected']")?.
+      attributes["value"] ?? "0";
+
+  return postParameters;
 }

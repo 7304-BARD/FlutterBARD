@@ -19,7 +19,10 @@ class Tournaments extends StatefulWidget {
 class TournamentsState extends CheckedSetState<Tournaments> {
   Map<String, String> _years;
   final Map<String, String> _months = dpgsGetTournamentFilterMonths();
-  Map<String, String> _postParameters;
+  String _year = Dates.getCurrentYear();
+  String _month = Dates.getCurrentMonth();
+
+  Map<String, String> _postParameters = dpgsGetDefaultTournamentPostParameters();
 
   DropdownMenuItem getDropdownItem(String text) =>
       new DropdownMenuItem(child: new Text(text), value: text);
@@ -34,8 +37,14 @@ class TournamentsState extends CheckedSetState<Tournaments> {
       return await dpgsFetchTournamentsData();
     },
     renderSuccess: ({data}) => new Column(children: <Widget>[
-      new DropdownButton(items: getDropdownList(_years.keys), value: Dates.getCurrentYear(), onChanged: null),
-      new DropdownButton(items: getDropdownList(_months.keys), value: Dates.getCurrentMonth(), onChanged: null),
+      new DropdownButton(items: getDropdownList(_years.keys), value: _year, onChanged: (newValue) {
+        _year = newValue;
+      }),
+      new DropdownButton(items: getDropdownList(_months.keys), value: _month, onChanged: (newValue) {
+        _month = newValue;
+        _postParameters["__EVENTTARGET"] = _months[newValue];
+
+      }),
       new Expanded(child:
         new ListView(children: (data as Iterable<Tournament>).map((t) =>
           new TournamentListElement(t, tapNav((BuildContext con) =>
