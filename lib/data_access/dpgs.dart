@@ -13,8 +13,11 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:tuple/tuple.dart';
 
+import 'package:flutter/foundation.dart';
+
 Future<Document> _fetchResource(Uri uri) async {
   try {
+    debugPrint("$uri");
     final request = await new HttpClient().getUrl(uri);
     final response = await request.close();
     final body = await response.transform(const Utf8Codec().decoder).join();
@@ -26,6 +29,7 @@ Future<Document> _fetchResource(Uri uri) async {
 
 Future<Document> _postResource(Uri uri) async {
   try {
+    debugPrint("$uri");
     final post = await new HttpClient().postUrl(uri);
     final response = await post.close();
     final body = await response.transform(const Utf8Codec().decoder).join();

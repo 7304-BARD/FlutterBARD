@@ -17,9 +17,10 @@ class Tournaments extends StatefulWidget {
 }
 
 class TournamentsState extends CheckedSetState<Tournaments> {
-  Map<String, String> _years;
+  Map<String, String> _years = {};
   final Map<String, String> _months = dpgsGetTournamentFilterMonths();
-  String _year = Dates.getCurrentYear();
+  String _year;
+  List<Tournament> _data = [];
   String _month = Dates.getCurrentMonth();
   Map<String, String> _postParameters =
       dpgsGetDefaultTournamentPostParameters();
@@ -31,43 +32,60 @@ class TournamentsState extends CheckedSetState<Tournaments> {
   List<DropdownMenuItem> getDropdownList(Iterable<String> keys) =>
       keys.map(getDropdownItem).toList();
 
-  Widget build(BuildContext con) => new LoaderScaffold(
-      title: "Tournaments",
-      initState: () async {
-        print("[TournamentsState.build] initState called");
-        _years = _years ?? await dpgsGetTournamentFilterYears();
-        return _doPost
+  void _getFilterYears() async {
+    _years = await dpgsGetTournamentFilterYears();
+    setState(() {
+      _year = Dates.getCurrentYear();
+    });
+    _getTournamentsData();
+  }
+
+  void _getTournamentsData() async {
+    _data = (_doPost
             ? await dpgsPostTournamentsData(_postParameters)
-            : await dpgsFetchTournamentsData(params: _postParameters);
-      },
-      renderSuccess: ({data}) => new Column(children: <Widget>[
-            new DropdownButton(
-                items: getDropdownList(_years.keys),
-                value: _year,
-                onChanged: (newValue) {
-                  _year = newValue;
-                }),
-            new DropdownButton(
-                items: getDropdownList(_months.keys),
-                value: _month,
-                onChanged: (newValue) {
-                  setState(() {
+            : await dpgsFetchTournamentsData(params: _postParameters))
+        .toList();
+    debugPrint("_data updated");
+    setState(() {});
+  }
+
+  void initState() {
+    super.initState();
+    _getFilterYears();
+  }
+
+  Widget build(BuildContext con) => new Scaffold(
+      appBar: new AppBar(title: const Text("Tournaments")),
+      body: _year == null
+          ? const CircularProgressIndicator()
+          : new Column(children: <Widget>[
+              new DropdownButton(
+                  items: getDropdownList(_years.keys),
+                  value: _year,
+                  onChanged: (newValue) {
+                    _year = newValue;
+                  }),
+              new DropdownButton(
+                  items: getDropdownList(_months.keys),
+                  value: _month,
+                  onChanged: (newValue) {
                     _month = newValue;
+                    debugPrint('_month changed to $newValue');
                     _postParameters["__EVENTTARGET"] = _months[newValue];
                     _doPost = true;
-                  });
-                }),
-            new Expanded(
-                child: new ListView(
-                    children: (data as Iterable<Tournament>)
-                        .map((t) => new TournamentListElement(
-                            t,
-                            tapNav(
-                                (BuildContext con) =>
-                                    new TournamentTeamListing(t),
-                                con)))
-                        .toList()))
-          ]));
+                    _getTournamentsData();
+                  }),
+              new Expanded(
+                  child: new ListView(
+                      children: _data
+                          .map((t) => new TournamentListElement(
+                              t,
+                              tapNav(
+                                  (BuildContext con) =>
+                                      new TournamentTeamListing(t),
+                                  con)))
+                          .toList()))
+            ]));
 }
 
 class TeamListElement extends StatelessWidget {
