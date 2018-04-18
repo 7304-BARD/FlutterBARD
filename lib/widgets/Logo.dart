@@ -63,8 +63,16 @@ class _FillerCard extends StatelessWidget {
           )));
 }
 
-class Logo extends StatelessWidget {
+class Logo extends StatefulWidget {
   const Logo();
+  createState() => new LogoState();
+}
+
+class LogoState extends State<Logo> {
+  static const String _imageAssetPrimary = "icons/mascot.png";
+  static const String _imageAssetSecondary = "icons/logo_sergey.png";
+  String _imageAsset = _imageAssetPrimary;
+  int _tapCount = 0;
 
   Widget build(BuildContext con) => new Column(
         children: [
@@ -76,10 +84,17 @@ class Logo extends StatelessWidget {
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(con).accentColor)))),
-          const _FillerCard(
-              name: "Buzz",
-              imageAsset: "icons/mascot.png",
-              background: Colors.lime),
+          new GestureDetector(
+              onTap: () {
+                if (++_tapCount == 21)
+                  setState(() {
+                    _imageAsset = _imageAssetSecondary;
+                  });
+              },
+              child: new _FillerCard(
+                  name: "Buzz",
+                  imageAsset: _imageAsset,
+                  background: Colors.lime)),
         ],
       );
 }

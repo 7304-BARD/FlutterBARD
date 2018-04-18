@@ -26,4 +26,5 @@ flutter_icons:
 flutter:
   uses-material-design: true
   assets:
+    - icons/logo_sergey.png
     - icons/mascot.png
