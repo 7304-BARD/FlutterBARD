@@ -1,5 +1,6 @@
 import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/HPButton.dart';
+import 'package:FlutterBARD/widgets/Logo.dart';
 import 'package:FlutterBARD/widgets/TF.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,17 +19,20 @@ class LoginState extends CheckedSetState<Login> {
         appBar: new AppBar(title: new Text("Login")),
         body: new Padding(
             padding: new EdgeInsets.all(20.0),
-            child: new Column(
+            child: new ListView(
               children: [
+                const Logo(),
                 new TF("Email", emailCon),
                 new TF("Password", passCon, password: true),
-                new HPButton('Login', () async {
+                new Center(
+                    child: new HPButton('Login', () async {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailCon.text, password: passCon.text);
                   Navigator.of(context).pushReplacementNamed('/');
-                }),
-                new HPNavButton(
-                    'Register', (BuildContext con) => new Register()),
+                })),
+                new Center(
+                    child: new HPNavButton(
+                        'Register', (BuildContext con) => new Register())),
               ],
             )));
   }

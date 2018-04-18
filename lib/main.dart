@@ -1,3 +1,4 @@
+import 'package:FlutterBARD/misc.dart';
 import 'package:FlutterBARD/widgets/scaffolded/HomePage.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Login.dart';
 import 'package:async_loader/async_loader.dart';
@@ -66,7 +67,7 @@ final _colorsTechBlue = const MaterialColor(0xff003057, const {
 
 class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => new MaterialApp(
-        title: 'Wreck Cards',
+        title: appTitle,
         theme: new ThemeData(
           primarySwatch: _colorsTechBlue,
           accentColor: _colorsBuzzGold,

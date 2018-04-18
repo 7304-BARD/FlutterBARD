@@ -1,4 +1,6 @@
+import 'package:FlutterBARD/misc.dart';
 import 'package:FlutterBARD/widgets/HPButton.dart';
+import 'package:FlutterBARD/widgets/Logo.dart';
 import 'package:FlutterBARD/widgets/scaffolded/CalendarUI.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Top50.dart';
 import 'package:FlutterBARD/widgets/scaffolded/Tournaments.dart';
@@ -11,7 +13,7 @@ class HomePage extends StatelessWidget {
   HomePage(this.user);
 
   Widget build(BuildContext con) => new Scaffold(
-      appBar: new AppBar(title: new Text("Wreck Cards"), actions: [
+      appBar: new AppBar(title: const Text("Home"), actions: [
         new IconButton(
             icon: new Icon(Icons.lock),
             onPressed: () async {
@@ -20,6 +22,7 @@ class HomePage extends StatelessWidget {
             })
       ]),
       body: new ListView(padding: new EdgeInsets.all(20.0), children: [
+        const Logo(),
         new HPNavButton("Event Calendar",
             (BuildContext con) => new CalendarUI(new DateTime.now())),
         new HPNavButton("My Watchlist", (BuildContext con) => new Watchlist()),
