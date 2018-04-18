@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/data_access/FirebaseAccess.dart';
@@ -27,23 +28,24 @@ Future<Document> _fetchResource(Uri uri) async {
   }
 }
 
-Future<Document> _postResource(Uri uri) async {
+Future<Document> _postResource(Uri uri, Map<String, String> params) async {
   try {
     debugPrint("$uri");
-    final post = await new HttpClient().postUrl(uri);
-    final response = await post.close();
-    final body = await response.transform(const Utf8Codec().decoder).join();
-    return parse(body);
+    final response = await http.post(uri, body: params);
+    debugPrint("response status code: ${response.statusCode}");
+    return parse(response.body);
   } catch (e) {
-    return _postResource(uri);
+    debugPrint("Error: $e");
+    rethrow;
+    return _postResource(uri, params);
   }
 }
 
 Future<Document> _fetchPGRaw(String res, [Map<String, String> params]) =>
     _fetchResource(new Uri.https('www.perfectgame.org', res, params));
 
-Future<Document> _postPGRaw(String res, Map<String, String> params) =>
-    _postResource(new Uri.https('www.perfectgame.org', res, params));
+Future<Document> _postPGRaw(String res, Map<String, String> params, [Map<String, String> querypParams]) =>
+    _postResource(new Uri.https('www.perfectgame.org', res, querypParams), params);
 
 Iterable<E> _stride<E>(Iterable<E> it, int stride) sync* {
   while (it.isNotEmpty) {
@@ -70,8 +72,7 @@ Future<Document> _fetchTournamentsPage() =>
     _fetchPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
 
 Future<Document> _postTournamentsPage(Map<String, String> params) {
-  params["Type"] = "Tournaments";
-  return _postPGRaw('Schedule/Default.aspx', params);
+  return _postPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'}, params);
 }
 
 Iterable<Element> _getPlayerKeyedTableAnchors(Document d) =>
