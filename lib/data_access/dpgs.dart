@@ -72,7 +72,7 @@ Future<Document> _fetchTournamentsPage() =>
     _fetchPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'});
 
 Future<Document> _postTournamentsPage(Map<String, String> params) {
-  return _postPGRaw('Schedule/Default.aspx', {'Type': 'Tournaments'}, params);
+  return _postPGRaw('Schedule/Default.aspx', params, {'Type': 'Tournaments'});
 }
 
 Iterable<Element> _getPlayerKeyedTableAnchors(Document d) =>
