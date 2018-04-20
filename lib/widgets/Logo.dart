@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 class _FillerText extends StatelessWidget {
-  static final _fillerChar = String.fromCharCode(0x3030);
+  static final _fillerChar = new String.fromCharCode(0x3030);
 
   final int height;
   final int width;
