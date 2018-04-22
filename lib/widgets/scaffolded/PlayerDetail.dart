@@ -3,10 +3,15 @@ import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/PlayerNoteEntry.dart';
-import 'package:FlutterBARD/widgets/scaffolded/cameraTest.dart';
+//import 'package:FlutterBARD/widgets/scaffolded/cameraTest.dart';
+import 'package:FlutterBARD/widgets/scaffolded/camera.dart';
+
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
 class KVText extends StatelessWidget {
   final Tuple2<String, String> pair;
@@ -59,6 +64,7 @@ class PlayerDetailState extends CheckedSetState<PlayerDetail> {
     if (!widget.player.populated)
       widget.player.populateAsync().whenComplete(() => setState(() {}));
     refreshNotes();
+    initCamera();
   }
 
   void refreshNotes() async {
@@ -66,6 +72,10 @@ class PlayerDetailState extends CheckedSetState<PlayerDetail> {
     setState(() {
       notes = n;
     });
+  }
+
+  Future<Null> initCamera() async {
+    cameras = await availableCameras();
   }
 
   Widget build(BuildContext con) => new Align(
@@ -89,7 +99,7 @@ class PlayerDetailState extends CheckedSetState<PlayerDetail> {
             new IconButton(
                 icon: new Icon(Icons.add_a_photo),
                 onPressed: tapNav(
-                        (BuildContext con) => new CameraApp(),
+                        (BuildContext con) => new CameraExampleHome(),
                     con,
                     refreshNotes)),
           ]),

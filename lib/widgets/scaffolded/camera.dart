@@ -35,14 +35,18 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     super.initState();
   }
 
+  Future<Null> initCamera() async {
+    cameras = await availableCameras();
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> headerChildren = <Widget>[];
 
     final List<Widget> cameraList = <Widget>[];
 
-    if (cameraList.isEmpty) {
-      cameraList.add(const Text('No cameras found'));
+    if (cameras.isEmpty) {
+      initCamera();
     } else {
       for (CameraDescription cameraDescription in cameras) {
         cameraList.add(
@@ -68,9 +72,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     }
 
     headerChildren.add(new Column(children: cameraList));
-    if (controller != null) {
+    /*if (controller != null) {
       headerChildren.add(playPauseButton());
-    }
+    }*/
     if (imagePath != null) {
       headerChildren.add(imageWidget());
     }
