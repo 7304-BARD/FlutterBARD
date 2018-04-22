@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterBARD/dates.dart';
 import 'package:FlutterBARD/values/Player.dart';
+import 'package:FlutterBARD/values/Team.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/PlayerListElement.dart';
@@ -130,12 +132,24 @@ class RosterListing extends StatelessWidget {
               children: [
             new Text(matchupRosters.tournament.location),
             new Text(matchupRosters.matchup.location)
-          ]..addAll(matchupRosters.matchup.teams.map((t) => new Column(
-                  children: [new Text(t.name)]..addAll(matchupRosters
-                          .rosters[t.id]
-                          ?.map((p) => new PlayerListElement(p)) ??
-                      [
-                        new Text("Roster Not Available",
-                            style: const TextStyle(color: Colors.red))
-                      ])))))));
+          ]..addAll(matchupRosters.matchup.teams
+                  .map((t) => new _RosterListingTeam(matchupRosters, t))))));
+}
+
+class _RosterListingTeam extends StatelessWidget {
+  final String name;
+  final List<Player> players;
+  _RosterListingTeam(MatchupRosters mr, Team t)
+      : name = t.name,
+        players = mr.rosters[t.id] {
+    Future.wait(players?.map((p) => p.populateAsync()) ?? []).then((_) {});
+  }
+
+  Widget build(BuildContext con) => new Column(
+      children: [new Text(name)]..addAll(
+          players?.map((p) => new PlayerListElement(p)) ??
+              [
+                new Text("Roster Not Available",
+                    style: const TextStyle(color: Colors.red))
+              ]));
 }
