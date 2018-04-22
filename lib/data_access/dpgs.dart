@@ -97,8 +97,14 @@ Future<Iterable<Tournament>> dpgsFetchTournamentsData(
 }
 
 Future<Iterable<Tournament>> dpgsPostTournamentsData(
-        Map<String, String> params) async =>
-    _getEventBoxes(await _postTournamentsPage(params)).map(_getEventData);
+        Map<String, String> params) async {
+  final doc = await _postTournamentsPage(params);
+  dpgsScrapeTournamentPostParameters(doc, params);
+
+  debugPrint("doc.text: \n\n ${doc.text} \n\n");
+
+  return _getEventBoxes(doc).map(_getEventData);
+}
 
 Future<Document> dpgsFetchTournamentTeamPage(Team t) =>
     _fetchPGRaw('Events/Tournaments/Teams/Default.aspx', {'team': t.id});
