@@ -3,6 +3,7 @@ import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/widgets/CheckedSetState.dart';
 import 'package:FlutterBARD/widgets/TapNav.dart';
 import 'package:FlutterBARD/widgets/scaffolded/PlayerNoteEntry.dart';
+import 'package:FlutterBARD/widgets/scaffolded/cameraTest.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -84,7 +85,13 @@ class PlayerDetailState extends CheckedSetState<PlayerDetail> {
                   FirebaseAccess
                       .toggleWatchlist(widget.player)
                       .whenComplete(() => setState(() => null));
-                })
+                }),
+            new IconButton(
+                icon: new Icon(Icons.add_a_photo),
+                onPressed: tapNav(
+                        (BuildContext con) => new CameraApp(),
+                    con,
+                    refreshNotes)),
           ]),
           body: new SingleChildScrollView(
               child: new Column(
