@@ -92,7 +92,7 @@ class MonthGrid extends StatelessWidget {
   const MonthGrid(this.month, this.start);
 
   build(BuildContext con) => new Column(
-      children: [const WeekdayRow()]..addAll([0, 1, 2, 3, 4].map(
+      children: [const WeekdayRow()]..addAll([0, 1, 2, 3, 4, 5].map(
           (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))));
 }
 
@@ -146,7 +146,8 @@ class CalendarUIState extends CheckedSetState<CalendarUI> {
                   _nextMonth();
               },
               key: new ObjectKey(new DateTime.now()),
-              child: new MonthGrid(month, Dates.monthStartDate(month)))));
+              child: new MonthGrid(
+                  month, Dates.weekStartDate(Dates.monthStartDate(month))))));
 }
 
 class ScheduleContext extends InheritedWidget {

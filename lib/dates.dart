@@ -93,6 +93,8 @@ abstract class Dates {
 
   static int parseShortMonth(String m) => monthAbbrevs.indexOf(m) + 1;
   static DateTime monthStartDate(DateTime m) => new DateTime(m.year, m.month);
+  static DateTime weekStartDate(DateTime w) =>
+      w.subtract(new Duration(days: w.weekday % 7));
 
   static DateTime prevMonth(DateTime m) => m.month == 1
       ? new DateTime(m.year - 1, 12)
