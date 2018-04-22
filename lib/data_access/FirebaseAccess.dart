@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:FlutterBARD/misc.dart';
 import 'package:FlutterBARD/values/Player.dart';
 import 'package:FlutterBARD/values/TournamentSchedule.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,7 +72,7 @@ class FirebaseAccess {
     await (await _getWatchlistEntryRef(p.pgid)).set(p.toWLEntry()[p.pgid]);
 
     // Newly-added players to the watchlist are inserted at the beginning.
-    if (await p.updateWatchlistRank(null, watchlistPlayers.first))
+    if (await p.updateWatchlistRank(null, getOrNull(watchlistPlayers, 0)))
       await Player.updateWatchlistRanks(watchlistPlayers..insert(0, p));
   }
 

@@ -8,3 +8,5 @@ Iterable<int> range(int end, {int start = 0, int step = 1}) sync* {
 /// Average two signed ints while avoiding possible overflow.
 int average2(int a, int b) =>
     (a ~/ 2) + (b ~/ 2) + ((a < 0 == b < 0) ? (a & b & 1) : (a & b ^ 1));
+
+const appTitle = "W[rec]k Cards";

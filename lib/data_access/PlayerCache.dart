@@ -28,14 +28,19 @@ class PlayerCache {
   Future<Map<String, dynamic>> getPlayerMap(String id) async =>
       (await getPlayerForId(id)).toMap();
 
+  Future<Null> _putPlayerMap(Player player) async {
+    await db.put(player.toMap()..addAll({'expiry': _expiryTime().toString()}),
+        player.pgid);
+  }
+
   Future<Player> getPlayerForId(String id) async {
     final cpm = await db.get(id);
-    if (cpm == null || _isExpired(cpm)) {
+    if (cpm == null) {
       final Player player = await dpgsFetchPlayer(id);
-      await db.put(player.toMap()..addAll({'expiry': _expiryTime().toString()}),
-          player.pgid);
+      await _putPlayerMap(player);
       return player;
     } else {
+      if (_isExpired(cpm)) dpgsFetchPlayer(id).then(_putPlayerMap).then((_) {});
       return new Player.fromMap(cpm);
     }
   }
