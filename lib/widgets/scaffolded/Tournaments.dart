@@ -64,6 +64,11 @@ class TournamentsState extends CheckedSetState<Tournaments> {
                   value: _year,
                   onChanged: (newValue) {
                     _year = newValue;
+                    debugPrint("_year changed to $newValue");
+                    _postParameters["__EVENTTARGET"] = "ctl00\$ContentPlaceHolder1\$ddlYear";
+                    _postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] = "$_year";
+                    _doPost = true;
+                    _getTournamentsData();
                   }),
               new DropdownButton(
                   items: getDropdownList(_months.keys),
