@@ -146,7 +146,8 @@ class CalendarUIState extends CheckedSetState<CalendarUI> {
                   _nextMonth();
               },
               key: new ObjectKey(new DateTime.now()),
-              child: new MonthGrid(month, Dates.monthStartDate(month)))));
+              child: new MonthGrid(
+                  month, Dates.weekStartDate(Dates.monthStartDate(month))))));
 }
 
 class ScheduleContext extends InheritedWidget {
