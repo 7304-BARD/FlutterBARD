@@ -57,8 +57,12 @@ Iterable<Element> _getPlayerKeyedTableAnchors(Document d) =>
 Iterable<Element> _getPlayerKeyedTableRows(Document d) =>
     _getPlayerKeyedTableAnchors(d).map((e) => _ancestorByTag(e, 'tr'));
 
-Iterable<Element> _getEventBoxes(Document d) =>
-    _stride(d.querySelectorAll("div.EventBox"), 2);
+Iterable<Element> _getEventBoxes(Document d) => _stride(
+    ["Ended", ""]
+        .map((s) => "div.${s}EventBox")
+        .map(d.querySelectorAll)
+        .expand((i) => i),
+    2);
 
 Future<Document> _fetchT50Page(String year) =>
     _fetchPGRaw('Rankings/Players/NationalRankings.aspx', {'gyear': year});
