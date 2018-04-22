@@ -92,7 +92,7 @@ class MonthGrid extends StatelessWidget {
   const MonthGrid(this.month, this.start);
 
   build(BuildContext con) => new Column(
-      children: [const WeekdayRow()]..addAll([0, 1, 2, 3, 4].map(
+      children: [const WeekdayRow()]..addAll([0, 1, 2, 3, 4, 5].map(
           (i) => new WeekRow(month, start.add(new Duration(days: i * 7))))));
 }
 
