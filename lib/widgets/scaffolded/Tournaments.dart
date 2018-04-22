@@ -57,7 +57,7 @@ class TournamentsState extends CheckedSetState<Tournaments> {
   Widget build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: const Text("Tournaments")),
       body: _year == null
-          ? const CircularProgressIndicator()
+          ? const Center(child: const CircularProgressIndicator())
           : new Column(children: <Widget>[
               new DropdownButton(
                   items: getDropdownList(_years.keys),
