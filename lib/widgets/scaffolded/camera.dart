@@ -149,7 +149,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
 
   Future<Null> capture() async {
     if (controller.value.isStarted) {
-      final Directory tempDir = await getTemporaryDirectory();
+      final Directory tempDir = await getApplicationDocumentsDirectory();
       if (!mounted) {
         return;
       }
