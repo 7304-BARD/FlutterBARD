@@ -102,13 +102,26 @@ class CalendarUIState extends CheckedSetState<CalendarUI> {
   List<Player> watchlist = [];
   CalendarUIState(this.month);
 
-  void loadSchedCon() async {
-    final ss = await FirebaseAccess.getTournamentSchedules();
-    final wl = await FirebaseAccess.getWatchlistPlayers();
+  void _updateSchedules() async {
+    final ss = await FirebaseAccess.getTournamentSchedules(month);
     setState(() {
       scheds = ss.toList();
+    });
+  }
+
+  void _updateMonth(DateTime m) async {
+    setState(() {
+      month = m;
+    });
+    _updateSchedules();
+  }
+
+  void loadSchedCon() async {
+    final wl = await FirebaseAccess.getWatchlistPlayers();
+    setState(() {
       watchlist = wl.toList();
     });
+    _updateSchedules();
   }
 
   initState() {
@@ -116,17 +129,8 @@ class CalendarUIState extends CheckedSetState<CalendarUI> {
     loadSchedCon();
   }
 
-  void _nextMonth() {
-    setState(() {
-      month = Dates.nextMonth(month);
-    });
-  }
-
-  void _previousMonth() {
-    setState(() {
-      month = Dates.prevMonth(month);
-    });
-  }
+  void _nextMonth() => _updateMonth(Dates.nextMonth(month));
+  void _previousMonth() => _updateMonth(Dates.prevMonth(month));
 
   build(BuildContext con) => new Scaffold(
       appBar: new AppBar(title: new Text(Dates.formatMonth(month)), actions: [

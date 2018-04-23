@@ -33,7 +33,7 @@ class FirebaseAccess {
   // The tsched_v2 key contains a list of JSON-ified TournamentSchedule objects.
   // The TournamentSchedule class is responsible for the representation.
   static Future<DatabaseReference> _getTScheduleDBRef() async =>
-      (await _getDBRootRef()).child('tsched_v2');
+      (await _getDBRootRef()).child('tsched_v3');
 
   static Future<Null> pushPlayerNote(Player p, String note) async =>
       await (await _getNotesDBRef()).child('${p.pgid}').push().set(note);
@@ -93,10 +93,12 @@ class FirebaseAccess {
     await dbref.set(ts.map((t) => t.toMap()).toList());
   }
 
-  static Future<Iterable<TournamentSchedule>> getTournamentSchedules() async {
+  static Future<Iterable<TournamentSchedule>> getTournamentSchedules(
+      DateTime month) async {
     final dbref = await _getTScheduleDBRef();
-    return (await dbref.once())
-        .value
-        .map<TournamentSchedule>(TournamentSchedule.fromMap);
+    return (await dbref.child("${month.year}/${month.month}").once())
+            .value
+            ?.map<TournamentSchedule>(TournamentSchedule.fromMap) ??
+        [];
   }
 }
