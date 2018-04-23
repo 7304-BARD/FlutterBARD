@@ -228,7 +228,7 @@ Future<List<TournamentSchedule>> dpgsPostTournamentSchedules(
     Future.wait((await dpgsPostTournamentsData(params))
         .map(dpgsFetchScheduleForTournament));
 
-Future<Null> dpgsUpdateTournamentSchedules({int nMonthsToScrape = 1}) async
+Future<Map<DateTime, List<TournamentSchedule>>> dpgsGetTournamentSchedulesMap({int nMonthsToScrape = 1}) async
 {
   Map<String, String> postParameters = dpgsGetDefaultTournamentPostParameters();
   final months = dpgsGetTournamentFilterMonths();
@@ -244,17 +244,21 @@ Future<Null> dpgsUpdateTournamentSchedules({int nMonthsToScrape = 1}) async
   List<TournamentSchedule> schedules =
     await dpgsFetchTournamentSchedules(params: postParameters);
 
+  DateTime key = DateTime.now();
+  key = new DateTime(key.year, key.month);
+
+  Map<DateTime, List<TournamentSchedule>> table;
+  table[key] = schedules;
+
   if(nMonthsToScrape <= 1) {
-    return FirebaseAccess.putTournamentSchedules(schedules);
+    return table;
   }
 
-  DateTime month = DateTime.now();
-
   for(int i = 1; i < nMonthsToScrape; ++i) {
-    final nextMonth = Dates.nextMonth(month);
+    final nextMonth = Dates.nextMonth(key);
 
-    if (Dates.isSameYear(month, nextMonth)) {
-      schedules.addAll(await postMonth(nextMonth));
+    if (Dates.isSameYear(key, nextMonth)) {
+      table[nextMonth] = await postMonth(nextMonth);
     }
 
     else {
@@ -263,11 +267,21 @@ Future<Null> dpgsUpdateTournamentSchedules({int nMonthsToScrape = 1}) async
       postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] = "${nextMonth.year}";
       await dpgsPostTournamentSchedules(postParameters);
 
-      schedules.addAll(await postMonth(nextMonth));
+      table[nextMonth] = await postMonth(nextMonth);
     }
 
-    month = nextMonth;
+    key = nextMonth;
   }
+
+  return table;
+}
+
+Future<Null> dpgsUpdateTournamentSchedules({int nMonthsToScrape = 1}) async
+{
+  final table = await dpgsGetTournamentSchedulesMap(nMonthsToScrape: nMonthsToScrape);
+  table.forEach((date, schedules) {
+    FirebaseAccess.putTournamentSchedules(schedules);
+  });
 }
 
 Tuple2<String, String> _getIdName(Element e) => new Tuple2(_getID(e), e.text);
