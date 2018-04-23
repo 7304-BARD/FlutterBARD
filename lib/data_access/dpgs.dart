@@ -228,8 +228,47 @@ Future<List<TournamentSchedule>> dpgsPostTournamentSchedules(
     Future.wait((await dpgsPostTournamentsData(params))
         .map(dpgsFetchScheduleForTournament));
 
-Future<Null> dpgsUpdateTournamentSchedules() async =>
-    FirebaseAccess.putTournamentSchedules(await dpgsFetchTournamentSchedules());
+Future<Null> dpgsUpdateTournamentSchedules({int nMonthsToScrape = 1}) async
+{
+  Map<String, String> postParameters = dpgsGetDefaultTournamentPostParameters();
+  final months = dpgsGetTournamentFilterMonths();
+
+  Future<List<TournamentSchedule>> postMonth(DateTime nextMonth) async
+  {
+    final monthKey = Dates.months[nextMonth.month - 1];
+    final monthValue = months[monthKey];
+    postParameters["__EVENTTARGET"] = monthValue;
+    return await dpgsPostTournamentSchedules(postParameters);
+  }
+
+  List<TournamentSchedule> schedules =
+    await dpgsFetchTournamentSchedules(params: postParameters);
+
+  if(nMonthsToScrape <= 1) {
+    return FirebaseAccess.putTournamentSchedules(schedules);
+  }
+
+  DateTime month = DateTime.now();
+
+  for(int i = 1; i < nMonthsToScrape; ++i) {
+    final nextMonth = Dates.nextMonth(month);
+
+    if (Dates.isSameYear(month, nextMonth)) {
+      schedules.addAll(await postMonth(nextMonth));
+    }
+
+    else {
+      // We have to update the year first
+      postParameters["__EVENTTARGET"] = "ctl00\$ContentPlaceHolder1\$ddlYear";
+      postParameters["ctl00\$ContentPlaceHolder1\$ddlYear"] = "${nextMonth.year}";
+      await dpgsPostTournamentSchedules(postParameters);
+
+      schedules.addAll(await postMonth(nextMonth));
+    }
+
+    month = nextMonth;
+  }
+}
 
 Tuple2<String, String> _getIdName(Element e) => new Tuple2(_getID(e), e.text);
 
@@ -305,7 +344,7 @@ Map<String, String> dpgsGetDefaultTournamentPostParameters() => {
       "__VIEWSTATEGENERATOR": "",
       "ctl00\$ContentPlaceHolder1\$ddlAgeDivision": "0",
       "ctl00\$ContentPlaceHolder1\$ddlState": "ZZ",
-      "ctl00\$ContentPlaceHolder1\$ddlYear": "2018",
+      "ctl00\$ContentPlaceHolder1\$ddlYear": Dates.getCurrentYear(),
       "ctl00\$ContentPlaceHolder1\$rblTournaments": "1,2,3"
     };
 
